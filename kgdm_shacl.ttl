@@ -1,0 +1,88 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix sh:   <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix kgdm: <https://kgraph.foo/onto/datamodelling#> .
+
+
+# Entity Shape
+
+kgdm:EntityShape a sh:NodeShape;
+    sh:targetClass kgdm:Entity ;
+    sh:nodeKind sh:IRI ;
+    sh:property kgdm:EntityModelContextShape .
+    
+
+kgdm:EntityModelContextShape a sh:PropertyShape ;
+    sh:path kgdm:isMemberOf ;
+    sh:minCount 1 ;
+    sh:class kgdm:Model .
+
+# Attribute Shape
+kgdm:AttributeShape a sh:NodeShape;
+    sh:targetClass kgdm:Attribute;
+    sh:nodeKind sh:IRI ;
+    sh:property kgdm:AttributeEntityContextShape ;
+    sh:property kgdm:AttributeDomainContextShape .
+
+kgdm:AttributeEntityContextShape a sh:PropertyShape ;
+    sh:path kgdm:isPartOf ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:class kgdm:Entity .
+
+kgdm:AttributeDomainContextShape a sh:PropertyShape ;
+    sh:path kgdm:isMemberOf ;
+    sh:qualifiedValueShape [
+        sh:class kgdm:Domain ;
+    ];
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedMaxCount 1 .
+
+
+# Relationship Shape
+kgdm:RelationshipShape a sh:NodeShape;
+    sh:targetClass kgdm:Relationship;
+    sh:nodeKind sh:IRI ;
+    sh:property kgdm:RelationshipSubjectContextShape ;
+    sh:property kgdm:RelationshipObjectContextShape .
+
+kgdm:RelationshipSubjectContextShape a sh:PropertyShape ;
+    sh:path [sh:inversePath kgdm:isPartOf ];
+    sh:qualifiedValueShape [
+        sh:class kgdm:subjectRole ;
+    ];
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedMaxCount 1 .
+    
+kgdm:RelationshipObjectContextShape a sh:PropertyShape ;
+    sh:path [sh:inversePath kgdm:isPartOf ];
+    sh:qualifiedValueShape [
+        sh:class kgdm:objectRole ;
+    ];
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedMaxCount 1 .
+
+# Role Shape
+kgdm:RoleShape a sh:NodeShape;
+    sh:targetClass kgdm:Role;
+    sh:nodeKind sh:IRI ;
+    sh:property kgdm:RoleEntityContextShape ;
+    sh:property kgdm:RoleKeyContextShape .
+
+kgdm:RoleEntityContextShape a sh:PropertyShape ;
+    sh:path kgdm:isAssociatedWith ;
+    sh:qualifiedValueShape [
+        sh:class kgdm:Entity ;
+    ];
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedMaxCount 1 .
+
+kgdm:RoleKeyContextShape a sh:PropertyShape ;
+    sh:path kgdm:isAssociatedWith;
+    sh:qualifiedValueShape [
+        sh:class kgdm:Key ;
+    ];
+    sh:qualifiedMinCount 1 ;
+    sh:qualifiedMaxCount 1 .

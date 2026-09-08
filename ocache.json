@@ -1,0 +1,6 @@
+{
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "72A8CA3D.owl",
+    "http://www.w3.org/2000/01/rdf-schema#": "026C1BA3.owl",
+    "https://kgraph.foo/onto/datamodelling#": "kgdm.owl",
+    "http://www.w3.org/2002/07/owl#": "D4C96B80.owl"
+}
