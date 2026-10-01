@@ -51,30 +51,11 @@
                     "Definition": false
                 },
                 {
-                    "InstanceName": "EntityNamespace",
-                    "SubjectTag": "EntityNamespace",
-                    "ParentTag": null,
-                    "Definition": false
-                },
-                {
                     "InstanceName": "AttributeDomainNamespace",
                     "SubjectTag": "AttributeDomainNamespace",
                     "ParentTag": null,
                     "Definition": false
                 },
-                {
-                    "InstanceName": "RelationshipNamespace",
-                    "SubjectTag": "RelationshipNamespace",
-                    "ParentTag": null,
-                    "Definition": false
-                },
-                {
-                    "InstanceName": "TargetEntityNamespace",
-                    "SubjectTag": "TargetEntityNamespace",
-                    "ParentTag": null,
-                    "Definition": false
-                },
-
                 {
                     "InstanceName": "DomainNamespace",
                     "SubjectTag": "DomainNamespace",
@@ -114,19 +95,19 @@
                 {
                     "InstanceName": "Entity",
                     "SubjectTag": "Entity",
-                    "ParentTag": "EntityNamespace",
+                    "ParentTag": "Model",
                     "Definition": true
                 },
                 {
                     "InstanceName": "SourceRoleEntity",
                     "SubjectTag": "SourceRoleEntity",
-                    "ParentTag": "EntityNamespace",
+                    "ParentTag": "Model",
                     "Definition": false
                 },
                 {
                     "InstanceName": "TargetRoleEntity",
                     "SubjectTag": "TargetRoleEntity",
-                    "ParentTag": "TargetEntityNamespace",
+                    "ParentTag": "TargetEntityModel",
                     "Definition": false
                 }
 
@@ -207,7 +188,7 @@
                 {
                     "InstanceName": "Relationship",
                     "SubjectTag": "Relationship",
-                    "ParentTag": "RelationshipNamespace",
+                    "ParentTag": "Model",
                     "Definition": true
                 }
             ]
@@ -294,6 +275,18 @@
                         "SubjectTag": "Domain",
                         "ObjectTag": "ParentDomain",
                         "EnableMultiValues": false
+                    },
+                    {
+                        "InstanceName": "EntityIsPartOfModel",
+                        "SubjectTag": "Entity",
+                        "ObjectTag": "Model",
+                        "EnableMultiValues": false
+                    },
+                    {
+                        "InstanceName": "RelationshipIsPartOfModel",
+                        "SubjectTag": "Relationship",
+                        "ObjectTag": "Model",
+                        "EnableMultiValues": false
                     }
                 ]
             },
@@ -305,12 +298,6 @@
                         "SubjectTag": "Model",
                         "ObjectTag": "ModelParent",
                         "EnableMultiValues": true
-                    },
-                    {
-                        "InstanceName": "EntityIsMemberOfModel",
-                        "SubjectTag": "Entity",
-                        "ObjectTag": "Model",
-                        "EnableMultiValues": false
                     },
                     {
                         "InstanceName": "EntityIsMemberOfSubjectArea",

@@ -15,7 +15,7 @@ kgdm:EntityShape a sh:NodeShape;
     
 
 kgdm:EntityModelContextShape a sh:PropertyShape ;
-    sh:path kgdm:isMemberOf ;
+    sh:path kgdm:isPartOf ;
     sh:minCount 1 ;
     sh:class kgdm:Model .
 
