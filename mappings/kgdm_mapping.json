@@ -73,6 +73,12 @@
                     "SubjectTag": "SubjectArea",
                     "ParentTag": "SubjectAreaNamespace",
                     "Definition": true
+                },
+                {
+                    "InstanceName": "ParentSubjectArea",
+                    "SubjectTag": "ParentSubjectArea",
+                    "ParentTag": "SubjectAreaNamespace",
+                    "Definition": true
                 }
             ]
         },
@@ -83,6 +89,12 @@
                 {
                     "InstanceName": "Model",
                     "SubjectTag": "Model",
+                    "ParentTag": "ModelNamespace",
+                    "Definition": true
+                },
+                {
+                    "InstanceName": "TargetEntityModel",
+                    "SubjectTag": "TargetEntityModel",
                     "ParentTag": "ModelNamespace",
                     "Definition": true
                 }
