@@ -96,7 +96,7 @@
                     "InstanceName": "TargetEntityModel",
                     "SubjectTag": "TargetEntityModel",
                     "ParentTag": "ModelNamespace",
-                    "Definition": true
+                    "Definition": false
                 }
             ]
         },
@@ -140,7 +140,7 @@
                     "SubjectTag": "EntityKeyAttributes",
                     "ParentTag": "Entity",
                     "Definition": false,
-                    "EnableMultiValues": true
+                    "EnableMultiValues": false
                 }
             ]
         },
