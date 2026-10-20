@@ -51,7 +51,7 @@ kgdm:RelationshipShape a sh:NodeShape;
 kgdm:RelationshipSubjectContextShape a sh:PropertyShape ;
     sh:path [sh:inversePath kgdm:isPartOf ];
     sh:qualifiedValueShape [
-        sh:class kgdm:subjectRole ;
+        sh:class kgdm:SubjectRole ;
     ];
     sh:qualifiedMinCount 1 ;
     sh:qualifiedMaxCount 1 .
@@ -59,7 +59,7 @@ kgdm:RelationshipSubjectContextShape a sh:PropertyShape ;
 kgdm:RelationshipObjectContextShape a sh:PropertyShape ;
     sh:path [sh:inversePath kgdm:isPartOf ];
     sh:qualifiedValueShape [
-        sh:class kgdm:objectRole ;
+        sh:class kgdm:ObjectRole ;
     ];
     sh:qualifiedMinCount 1 ;
     sh:qualifiedMaxCount 1 .

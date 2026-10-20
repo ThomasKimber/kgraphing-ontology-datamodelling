@@ -121,7 +121,7 @@
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/namespace#5a6aa27b0ac54261b82a7fcc0e0d02ad"/>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#c3feb9245d15472293de5a8e1efa852a">
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#8b84c7dcf3fa4ca1bc607a65931c8e35"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#f4bcc0894e074a74a4fd36f27a37cdd2"/>
     <ns1:Name>object</ns1:Name>
@@ -163,7 +163,7 @@
     <ns1:Name>object</ns1:Name>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#b80ccd3af4214057a0de7cdc947a2602"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#bbb2ea19089344389b22700771f7ea5c">
     <kgdm:isMemberOf rdf:resource="https://kgraph.foo/entities#a473c419bf0f4d1fba892efd41364b68"/>
@@ -222,7 +222,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#517b5cfd8ef546b9b212dff41a672024"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#18115c0eac844d8cbb4a31e093a69289"/>
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:Name>object</ns1:Name>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#08837f655ec145cb8c08d198a1d0b17a">
@@ -251,7 +251,7 @@
     <ns1:Name>subject</ns1:Name>
     <rdfs:label>subject</rdfs:label>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#99831fc2f4b7489294b30edd15d267c3">
@@ -280,7 +280,7 @@
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
     <rdfs:label>object</rdfs:label>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#2d2112d23b0d4505b9a7c262702c4316"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#2d2112d23b0d4505b9a7c262702c4316"/>
   </rdf:Description>
@@ -291,7 +291,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#bb13450a71c74ea6aeacfc82d54c9933"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#ec6ced8f6a8145d4bcd78e089d42f8a9"/>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.PartyRoleContext-Party.subject</ns1:FullyQualifiedName>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:Name>subject</ns1:Name>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#08837f655ec145cb8c08d198a1d0b17a"/>
@@ -316,9 +316,9 @@
     <rdfs:label>subject</rdfs:label>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
     <ns1:Name>subject</ns1:Name>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.Membership-PartyRole.subject</ns1:FullyQualifiedName>
-    <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#0636e8dbe3d24895863e467bf74b4b03"/>
+    <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#0636e8dbe3d24895863e467bf74b4b03"/>S
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#29275561f8c44690a70ce58f3cd3f0e3">
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.Party.PartyIdentifier</ns1:FullyQualifiedName>
@@ -401,7 +401,7 @@
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.WorkAuthor-Work.subject</ns1:FullyQualifiedName>
     <rdfs:label>subject</rdfs:label>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#b80ccd3af4214057a0de7cdc947a2602"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#b80ccd3af4214057a0de7cdc947a2602"/>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
     <ns1:Name>subject</ns1:Name>
@@ -499,7 +499,7 @@
     <kgdm:ElementSequence rdf:datatype="http://www.w3.org/2001/XMLSchema#integer">4</kgdm:ElementSequence>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#a7a3ed5fe4cd4804b78191e68f6db5c9">
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#8af7264088234bd4b001594fdabec09f"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#8af7264088234bd4b001594fdabec09f"/>
@@ -622,7 +622,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#669558ed8d1e4a1a87d965b8fda0a8bf"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#2415c41ea1644d9e91338e7ba8899ad3"/>
     <rdfs:label>object</rdfs:label>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.classifiedBy.object</ns1:FullyQualifiedName>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#315c1600424b4923813c89337af39539"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
@@ -659,7 +659,7 @@
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#76a09c1416554e49af9dc3adec0571c4">
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.partOf.object</ns1:FullyQualifiedName>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#52a3ffc00b85415aa057ed68171f991d"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#870c2c54e9ca490592adc71045a1051f"/>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#8aa0b6a97cb2469ba033e7116dd92688"/>
@@ -741,7 +741,7 @@
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.Membership-PartyRole.object</ns1:FullyQualifiedName>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#bb13450a71c74ea6aeacfc82d54c9933"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#c70e517dc9324fec96bd0eaf991e5237"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:Name>object</ns1:Name>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#0636e8dbe3d24895863e467bf74b4b03"/>
@@ -813,7 +813,7 @@
     <ns1:Name>object</ns1:Name>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#c7d21591bc5c4f8e8c4e3fe1f839bc32"/>
     <rdfs:label>object</rdfs:label>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#2d2112d23b0d4505b9a7c262702c4316">
@@ -827,7 +827,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#70e1228d3cae4132800b383358e5430f"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#ba0846926a9046a3aa28aa651a278b93"/>
     <rdfs:label>object</rdfs:label>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.associatedAsset.object</ns1:FullyQualifiedName>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#d7e6aba5f5154517bd7382aff610776d"/>
@@ -852,7 +852,7 @@
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#dfebdb2849c445cba25b81c7a4ab2f9b"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#3410628c4fa24db39eb829e06ea8c4ef"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#97702e3adcc64b51a425edf94d0552b9"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:Name>object</ns1:Name>
     <rdfs:label>object</rdfs:label>
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
@@ -993,7 +993,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#1cc80a446dd943f2b04b91fd3ae5685c"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#7f2acfdd9f36476c9a7ece216d4b51c8"/>
     <rdfs:label>object</rdfs:label>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#18115c0eac844d8cbb4a31e093a69289">
     <rdfs:label>Primary Key</rdfs:label>
@@ -1047,7 +1047,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#8ec98eaea70144889b4b68f6511b7b90"/>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#d7e6aba5f5154517bd7382aff610776d"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:Name>subject</ns1:Name>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.associatedAsset.subject</ns1:FullyQualifiedName>
@@ -1102,7 +1102,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#97702e3adcc64b51a425edf94d0552b9"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#3410628c4fa24db39eb829e06ea8c4ef"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#2c5b876a3b64471d9fed1ff673271248"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.assignedTo.object</ns1:FullyQualifiedName>
     <ns1:Name>object</ns1:Name>
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
@@ -1126,7 +1126,7 @@
     <ns1:Name>object</ns1:Name>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#acb9b1c928ea41068765b805d10bbf32"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#ba6e7594b7734355bd7ee8636ebd4c0e"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#f640a862e9b6428dbbbcd5dfaef3c762"/>
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
@@ -1170,7 +1170,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#383e1eef475240a8b134471e5ad25454"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:Name>subject</ns1:Name>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#315c1600424b4923813c89337af39539"/>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#1cc80a446dd943f2b04b91fd3ae5685c">
@@ -1260,7 +1260,7 @@
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.assignedTo.subject</ns1:FullyQualifiedName>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#2c5b876a3b64471d9fed1ff673271248"/>
     <ns1:Name>subject</ns1:Name>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#37ab18928b3b4214b9db9594c12b56b3"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#cdef4926b5c1418ba16c8e9a8e5600a0"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#2c5b876a3b64471d9fed1ff673271248"/>
@@ -1285,7 +1285,7 @@
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#08837f655ec145cb8c08d198a1d0b17a"/>
     <kgdm:RoleCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#double">1.0</kgdm:RoleCardinality>
     <rdfs:label>object</rdfs:label>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#objectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#d73077859fc24974a51926870897ecff"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#7b00c8ec34fd47e28092fc5a1d439cb6"/>
   </rdf:Description>
@@ -1378,7 +1378,7 @@
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#2d2112d23b0d4505b9a7c262702c4316"/>
     <rdfs:label>subject</rdfs:label>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#2d2112d23b0d4505b9a7c262702c4316"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#32cbd757b09647d9a86fd4d06344602d"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#230989c6b8dd43f8a2f92947e64442d1"/>
@@ -1403,7 +1403,7 @@
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#6b5f3cb428a04dc99ed29b563736fa62"/>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.Loan-Member.subject</ns1:FullyQualifiedName>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <ns1:Name>subject</ns1:Name>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#decb1fde7c0a46f780fd23c0edab8b9a">
@@ -1457,7 +1457,7 @@
   <rdf:Description rdf:about="https://kgraph.foo/entities#d0caed3152184b5aa151d0ad7e276a79">
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.Asset-Library.subject</ns1:FullyQualifiedName>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#46ecd721ed5f4c9e983d5f5d38ebd568"/>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:RoleOptionality>No</kgdm:RoleOptionality>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#46ecd721ed5f4c9e983d5f5d38ebd568"/>
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#ba0846926a9046a3aa28aa651a278b93"/>
@@ -1499,7 +1499,7 @@
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.Membership-Library.subject</ns1:FullyQualifiedName>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#c7d21591bc5c4f8e8c4e3fe1f839bc32"/>
     <ns1:Name>subject</ns1:Name>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#c7d21591bc5c4f8e8c4e3fe1f839bc32"/>
     <rdfs:label>subject</rdfs:label>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
@@ -1553,7 +1553,7 @@
     <kgdm:isAssociatedWith rdf:resource="https://kgraph.foo/entities#81220c2adb484fcf871fceeb9ba51247"/>
     <kgdm:RoleCardinality>M</kgdm:RoleCardinality>
     <ns1:Name>subject</ns1:Name>
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <kgdm:isPartOf rdf:resource="https://kgraph.foo/entities#dfebdb2849c445cba25b81c7a4ab2f9b"/>
     <rdfs:label>subject</rdfs:label>
   </rdf:Description>
@@ -1596,7 +1596,7 @@
     <ns1:Name>WorkClassification</ns1:Name>
   </rdf:Description>
   <rdf:Description rdf:about="https://kgraph.foo/entities#08f1a7c750274c98aa3ee953f534186d">
-    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#subjectRole"/>
+    <rdf:type rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
     <ns1:FullyQualifiedName>Global.Datamodel.Logical.Library.partOf.subject</ns1:FullyQualifiedName>
     <ns1:isScopedWithin rdf:resource="https://kgraph.foo/entities#8aa0b6a97cb2469ba033e7116dd92688"/>
     <ns1:Name>subject</ns1:Name>

@@ -140,7 +140,7 @@
                     "SubjectTag": "EntityKeyAttributes",
                     "ParentTag": "Entity",
                     "Definition": false,
-                    "EnableMultiValues": false
+                    "EnableMultiValues": true
                 }
             ]
         },
@@ -206,7 +206,7 @@
             ]
         },
         {
-            "TargetClass": "https://kgraph.foo/onto/datamodelling#subjectRole",
+            "TargetClass": "https://kgraph.foo/onto/datamodelling#SubjectRole",
             "URIBase": "https://kgraph.foo/entities#",
             "Instances": [
                 {
@@ -219,7 +219,7 @@
             
         },
             {
-            "TargetClass": "https://kgraph.foo/onto/datamodelling#objectRole",
+            "TargetClass": "https://kgraph.foo/onto/datamodelling#ObjectRole",
             "URIBase": "https://kgraph.foo/entities#",
             "Instances": [
 

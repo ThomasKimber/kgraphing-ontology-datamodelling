@@ -1,1 +1,34 @@
 # kgraphing-ontology-datamodelling
+
+## Purpose
+
+This project covers templates, mappings and materials used to collate a coherent data architecture picture covering vocabulary definitions, conceptual data models, logical and physical models and inter-classification mappings. Other capabilities might include data harvesting patterns to help manage, ingest and decompose complex and heterogenic data sources. 
+
+It should enable the creation and management of the following Data Architecture Artefacts as data:
+
+* Controlled Vocabulary
+* Conceptual Taxonomy
+* Conceptual Data Models
+* Logical Data Models
+* Physical Data Models
+* Mappings across and between each of the artefacts
+
+The storage of this collection of artefacts is intended to be a knowledge graph, with generation routines used to create individual artefacts for publication within a project environment from a data architecture perspective. This might include explainer documents and presentations to help explain individual artefact scope and usage in a typical project environment where Business Analysts, Architects may be working across multiple value streams.
+
+There's some overlap between these data architecture artefacts and aligned Solution or Enterprise Artefacts to be covered in a separate project repository.
+
+## Dependencies
+
+The project is an extension of the kgraphing library, which handles the technical management of knowledge graph activity and exposes some common capabilities for leverage by domain-specific projects like this one. 
+
+## Supported Workflow Model
+
+1. Identify and Catalogue Structured and Unstructured Information Sources (e.g. walk over websites and confluence pages)
+2. Extract and Catalogue Business Vocabulary and Terms (referencing back to sources identified in 1)
+3. Define functional and operational requirements
+4. Collate and Model Conceptual Entities (and link back to Controlled Vocabulary Terms)
+5. Collate and Model Logical Data Entities (and link back to Conceptual Entities)
+6. Collate and Model Physical Data Sources (systems of record and interface definitions)
+7. Collate and Model Physical Data Models (extract physical data models from source RDBMS)
+8. 
+
