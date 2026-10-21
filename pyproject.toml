@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "kgraphing-ontology-datamodelling"
 version = "0.1.0"
@@ -7,9 +11,10 @@ requires-python = ">=3.12"
 dependencies = [
     "gravis",
     "kgraphing",
-    "maplib>=0.20.26",
-    "polars>=1.44.1",
 ]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
 
 [tool.uv.sources]
 kgraphing = { git = "https://github.com/ThomasKimber/kgraph", branch = "main" }

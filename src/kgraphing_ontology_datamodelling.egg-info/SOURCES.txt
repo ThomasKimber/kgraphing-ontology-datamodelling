@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/__init__.py
+src/query.py
+src/kgraphing_ontology_datamodelling.egg-info/PKG-INFO
+src/kgraphing_ontology_datamodelling.egg-info/SOURCES.txt
+src/kgraphing_ontology_datamodelling.egg-info/dependency_links.txt
+src/kgraphing_ontology_datamodelling.egg-info/requires.txt
+src/kgraphing_ontology_datamodelling.egg-info/top_level.txt
+src/sparql/__init__.py
