@@ -1,0 +1,8 @@
+SELECT
+    ?subject ?label ?type
+WHERE
+    {
+        ?subject a ?type.
+        ?subject rdfs:label ?label.
+        FILTER(STR(?label) = STR(?search))
+    }

@@ -1,0 +1,9 @@
+SELECT
+
+    ?dependant
+
+WHERE
+
+    {
+        ?dependant kgdm:isDependentOn+ ?node.
+    }

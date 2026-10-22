@@ -13,8 +13,11 @@ dependencies = [
     "kgraphing",
 ]
 
+[tool.uv]
+package = true
+
 [tool.hatch.build.targets.wheel]
-packages = ["src"]
+packages = ["src/kgraphing_ontology_datamodelling"]
 
 [tool.uv.sources]
 kgraphing = { git = "https://github.com/ThomasKimber/kgraph", branch = "main" }
