@@ -1,20 +1,18 @@
 CONSTRUCT 
 
-    {?objectEntity ?p ?subjectEntity}
+    {?objectEntity kgdm:isDependentOn ?subjectEntity}
 
     WHERE
 
 {
     ?relationship a kgdm:Relationship.
-    ?objectRole a kgdm:ObjectRole.
-    ?subjectRole a kgdm:SubjectRole.
-    ?objectEntity a kgdm:Entity.
-    ?subjectEntity a kgdm:Entity.
-    ?subjectRole kgdm:isAssociatedWith ?subjectEntity.
-    ?objectRole kgdm:isAssociatedWith ?objectEntity.
-    ?subjectRole kgdm:isPartOf ?relationship.
-    ?objectRole kgdm:isPartOf ?relationship.
 
-    VALUES ?p {kgdm:isDependentOn}
+    ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
+        a kgdm:SubjectRole;
+            kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
+
+    ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
+        a kgdm:ObjectRole;
+            kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
     
 }

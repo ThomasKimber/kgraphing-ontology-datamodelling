@@ -250,50 +250,68 @@
 
     ],
         "Relationships": [
-            {   "Predicate": "https://kgraph.foo/onto/datamodelling#isPartOf", 
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#attributeIsPartOfEntity", 
                 "Instances": [
                     {
                         "InstanceName": "AttributeIsPartOfEntity",
                         "SubjectTag": "Attribute",
                         "ObjectTag": "Entity",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#keyIsPartOfEntity", 
+                "Instances": [
                     {
                         "InstanceName": "KeyIsPartOfEntity",
                         "SubjectTag": "EntityKey",
                         "ObjectTag": "Entity",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#subjectRoleIsPartOfRelationship", 
+                "Instances": [
                     {
                         "InstanceName": "SourceRoleIsPartOfRelationship",
                         "SubjectTag": "SourceRole",
                         "ObjectTag": "Relationship",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#objectRoleIsPartOfRelationship", 
+                "Instances": [
                     {
                         "InstanceName": "TargetRoleIsPartOfRelationship",
                         "SubjectTag": "TargetRole",
                         "ObjectTag": "Relationship",
                         "EnableMultiValues": false
-                    },
-                    {
-                        "InstanceName": "AttributeDomainIsPartOfAttributeDomainNamespace",
-                        "SubjectTag": "AttributeDomain",
-                        "ObjectTag": "AttributeDomainNamespace",
-                        "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#domainIsPartOfParentDomain", 
+                "Instances": [
                     {
                         "InstanceName": "DomainIsPartOfParentDomain",
                         "SubjectTag": "Domain",
                         "ObjectTag": "ParentDomain",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#entityIsPartOfModel", 
+                "Instances": [
                     {
                         "InstanceName": "EntityIsPartOfModel",
                         "SubjectTag": "Entity",
                         "ObjectTag": "Model",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {   "Predicate": "https://kgraph.foo/onto/datamodelling#relationshipIsPartOfModel", 
+                "Instances": [
                     {
                         "InstanceName": "RelationshipIsPartOfModel",
                         "SubjectTag": "Relationship",
@@ -332,7 +350,7 @@
                 ]
             },
             {
-                "Predicate": "https://kgraph.foo/onto/datamodelling#isAssociatedWith", 
+                "Predicate": "https://kgraph.foo/onto/datamodelling#subjectRoleIsAssociatedWithKey", 
                 "Instances": [
 
                     {
@@ -340,19 +358,37 @@
                         "SubjectTag": "SourceRole",
                         "ObjectTag": "SourceRoleKey",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {
+                "Predicate": "https://kgraph.foo/onto/datamodelling#objectRoleIsAssociatedWithKey", 
+                "Instances": [
+
                     {
                         "InstanceName": "TargetRoleIsAssociatedWithKey",
                         "SubjectTag": "TargetRole",
                         "ObjectTag": "TargetRoleKey",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {
+                "Predicate": "https://kgraph.foo/onto/datamodelling#subjectRoleIsAssociatedWithEntity", 
+                "Instances": [
+
                     {
                         "InstanceName": "SourceRoleIsAssociatedWithEntity",
                         "SubjectTag": "SourceRole",
                         "ObjectTag": "SourceRoleEntity",
                         "EnableMultiValues": false
-                    },
+                    }
+                ]
+            },
+            {
+                "Predicate": "https://kgraph.foo/onto/datamodelling#objectRoleIsAssociatedWithEntity", 
+                "Instances": [
+
                     {
                         "InstanceName": "TargetRoleIsAssociatedWithEntity",
                         "SubjectTag": "TargetRole",
@@ -361,7 +397,7 @@
                     }
                 ]
             },
-                        {
+            {
                 "Predicate": "https://kgraph.foo/onto/datamodelling#hasElementList", 
                 "Instances": [
 
