@@ -29,6 +29,7 @@
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#attributeIsPartOfEntity">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Attribute"/>
         <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Entity"/>
     </owl:ObjectProperty>
@@ -39,6 +40,7 @@
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#domainIsPartOfParentDomain">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
     </owl:ObjectProperty>
     
 
@@ -47,6 +49,7 @@
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#entityIsPartOfModel">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Entity"/>
         <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Model"/>
     </owl:ObjectProperty>
@@ -86,6 +89,14 @@
         <rdfs:comment>Describes a broad hierarchical relationship where the subject has a hierarchical parent within a particular hierarchy.
 
 In this context, a hierarchy is a tree where children can only have one parent. It is possible however for one entity to be involved across any number of hierarchies. As a result, isChildOf should normally be subclassed per hierarchy to enable sensible enforcement of this rule.</rdfs:comment>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#isDependentOn -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#isDependentOn">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
     </owl:ObjectProperty>
     
 
@@ -147,8 +158,25 @@ Contrast with isPartOf which defines dependent, compositional relationships that
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#keyIsPartOfEntity">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Key"/>
         <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Entity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#objectRoleIsAssociatedWithEntity -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#objectRoleIsAssociatedWithEntity">
+        <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isAssociatedWith"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#objectRoleIsAssociatedWithKey -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#objectRoleIsAssociatedWithKey">
+        <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isAssociatedWith"/>
     </owl:ObjectProperty>
     
 
@@ -157,6 +185,7 @@ Contrast with isPartOf which defines dependent, compositional relationships that
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#objectRoleIsPartOfRelationship">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#ObjectRole"/>
         <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Relationship"/>
     </owl:ObjectProperty>
@@ -167,8 +196,25 @@ Contrast with isPartOf which defines dependent, compositional relationships that
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#relationshipIsPartOfModel">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Relationship"/>
         <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Model"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#subjectRoleIsAssociatedWithEntity -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#subjectRoleIsAssociatedWithEntity">
+        <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isAssociatedWith"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#subjectRoleIsAssociatedWithKey -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#subjectRoleIsAssociatedWithKey">
+        <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isAssociatedWith"/>
     </owl:ObjectProperty>
     
 
@@ -177,6 +223,7 @@ Contrast with isPartOf which defines dependent, compositional relationships that
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#subjectRoleIsPartOfRelationship">
         <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isPartOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#FunctionalProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#SubjectRole"/>
         <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Relationship"/>
     </owl:ObjectProperty>

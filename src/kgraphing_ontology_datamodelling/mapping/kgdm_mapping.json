@@ -95,7 +95,7 @@
                 {
                     "InstanceName": "TargetEntityModel",
                     "SubjectTag": "TargetEntityModel",
-                    "ParentTag": "ModelNamespace",
+                    "ParentTag": null,
                     "Definition": false
                 }
             ]
@@ -177,20 +177,31 @@
                     "SubjectTag": "EntityKey",
                     "ParentTag": "Entity",
                     "Definition": true
-                },
+                }
+            ]
+        },
+        {
+            "TargetClass": "https://kgraph.foo/onto/datamodelling#ForeignKey",
+            "URIBase": "https://kgraph.foo/entities#",
+            "Instances": [
                 {
                     "InstanceName": "SourceRoleKey",
                     "SubjectTag": "SourceRoleKey",
                     "ParentTag": "Entity",
                     "Definition": false
-                },
+                }
+            ]
+        },
+        {
+            "TargetClass": "https://kgraph.foo/onto/datamodelling#PrimaryKey",
+            "URIBase": "https://kgraph.foo/entities#",
+            "Instances": [
                 {
                     "InstanceName": "TargetRoleKey",
                     "SubjectTag": "TargetRoleKey",
                     "ParentTag": "TargetRoleEntity",
                     "Definition": false
                 }
-                
             ]
         },
         {
