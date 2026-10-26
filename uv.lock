@@ -59,7 +59,7 @@ wheels = [
 [[package]]
 name = "kgraphing"
 version = "0.0.1"
-source = { git = "https://github.com/ThomasKimber/kgraph?branch=main#4ce180b746969bbbc1ef6a31ebec7c8d7f324d0c" }
+source = { git = "https://github.com/ThomasKimber/kgraph?branch=main#3123a41d263e1a146d6ce35fed0ca00073db26cc" }
 dependencies = [
     { name = "networkx" },
     { name = "openpyxl" },

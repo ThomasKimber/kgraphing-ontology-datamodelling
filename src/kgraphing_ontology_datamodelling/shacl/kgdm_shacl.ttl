@@ -15,7 +15,7 @@ kgdm:EntityShape a sh:NodeShape;
     
 
 kgdm:EntityModelContextShape a sh:PropertyShape ;
-    sh:path kgdm:isPartOf ;
+    sh:path kgdm:entityIsPartOfModel ;
     sh:minCount 1 ;
     sh:class kgdm:Model .
 
@@ -27,7 +27,7 @@ kgdm:AttributeShape a sh:NodeShape;
     sh:property kgdm:AttributeDomainContextShape .
 
 kgdm:AttributeEntityContextShape a sh:PropertyShape ;
-    sh:path kgdm:isPartOf ;
+    sh:path kgdm:attributeIsPartOfEntity ;
     sh:minCount 1 ;
     sh:maxCount 1 ;
     sh:class kgdm:Entity .
@@ -49,7 +49,7 @@ kgdm:RelationshipShape a sh:NodeShape;
     sh:property kgdm:RelationshipObjectContextShape .
 
 kgdm:RelationshipSubjectContextShape a sh:PropertyShape ;
-    sh:path [sh:inversePath kgdm:isPartOf ];
+    sh:path [sh:inversePath kgdm:subjectRoleIsPartOfRelationship ];
     sh:qualifiedValueShape [
         sh:class kgdm:SubjectRole ;
     ];
@@ -57,7 +57,7 @@ kgdm:RelationshipSubjectContextShape a sh:PropertyShape ;
     sh:qualifiedMaxCount 1 .
     
 kgdm:RelationshipObjectContextShape a sh:PropertyShape ;
-    sh:path [sh:inversePath kgdm:isPartOf ];
+    sh:path [sh:inversePath kgdm:objectRoleIsPartOfRelationship ];
     sh:qualifiedValueShape [
         sh:class kgdm:ObjectRole ;
     ];

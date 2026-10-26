@@ -1,0 +1,22 @@
+CONSTRUCT 
+
+    {?s a ?o}
+
+    WHERE
+{
+    {
+        ?s a kgdm:Key;
+            ^kgdm:objectRoleIsAssociatedWithKey ?objectRole.
+        ?objectRole a kgdm:ObjectRole.
+        VALUES ?o {kgdm:PrimaryKey}
+    }
+
+    UNION
+
+    {
+        ?s a kgdm:Key;
+            ^kgdm:subjectRoleIsAssociatedWithKey ?subjectRole.
+        ?subjectRole a kgdm:SubjectRole.
+        VALUES ?o {kgdm:ForeignKey}
+    }
+}

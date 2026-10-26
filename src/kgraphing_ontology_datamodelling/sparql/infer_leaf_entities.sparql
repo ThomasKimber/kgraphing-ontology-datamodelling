@@ -1,0 +1,19 @@
+CONSTRUCT { ?subjectEntity kgdm:isLeafEntity ?leaf_test }
+WHERE
+{
+    ?subjectEntity a kgdm:Entity.
+    BIND (NOT EXISTS {    
+
+        ?relationship a kgdm:Relationship.
+    
+        ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
+            a kgdm:SubjectRole;
+                kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
+    
+        ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
+            a kgdm:ObjectRole;
+                kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
+        
+
+                } as ?leaf_test)
+}

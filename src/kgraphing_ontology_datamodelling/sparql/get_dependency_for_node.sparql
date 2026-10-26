@@ -5,5 +5,5 @@ SELECT
 WHERE
 
     {
-        ?dependency ^kgdm:isDependentOn+ ?node.
+        ?dependency kgdm:isDependentOn+ ?node.
     }
