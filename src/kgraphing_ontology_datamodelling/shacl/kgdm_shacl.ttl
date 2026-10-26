@@ -33,7 +33,7 @@ kgdm:AttributeEntityContextShape a sh:PropertyShape ;
     sh:class kgdm:Entity .
 
 kgdm:AttributeDomainContextShape a sh:PropertyShape ;
-    sh:path kgdm:isMemberOf ;
+    sh:path kgdm:attributeisMemberOfDomain ;
     sh:qualifiedValueShape [
         sh:class kgdm:Domain ;
     ];

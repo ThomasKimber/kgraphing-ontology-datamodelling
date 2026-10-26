@@ -585,6 +585,18 @@
                     "LiteralTag": "TargetRoleOptionality"
                 }
         ]
+    },
+
+        {
+
+            "Predicate": "https://kgraph.foo/onto/datamodelling#AttributeOptionality",
+            "Instances": [
+                {
+                    "InstanceName": "AttributeOptionality",
+                    "SubjectTag": "Attribute",
+                    "LiteralTag": "AttributeNulls"
+                }
+        ]
     }
     ]
 }
