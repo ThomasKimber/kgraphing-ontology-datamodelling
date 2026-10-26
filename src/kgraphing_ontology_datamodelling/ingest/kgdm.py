@@ -65,3 +65,9 @@ Q_entity_attribute_sheet = rdfquery.QueryAPI("Entity and Attribute Sheet",
                              description="Report showing entities and their attributes with PK/FK flags.",
                              parameters={"entity" : URIRef},
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#"})
+
+Q_relationship_sheet = rdfquery.QueryAPI("Relationship Sheet",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('relationship_sheet.sparql').read_text(encoding="utf-8"),
+                             description="Report showing relationships with associated flags and properties.",
+                             parameters={"relationship" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#"})

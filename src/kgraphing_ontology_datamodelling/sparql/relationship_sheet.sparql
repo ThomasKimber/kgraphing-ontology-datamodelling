@@ -1,0 +1,36 @@
+    SELECT DISTINCT
+        
+        ?relationship
+        ?relationship_label
+        ?relationship_description
+        ?relationship_from_entity
+        ?relationship_to_entity
+        ?relationship_from_entity_label
+        ?relationship_to_entity_label
+        ?object_role_cardinality
+        ?object_role_optionality
+        ?subject_role_cardinality
+        ?subject_role_optionality
+
+    WHERE
+        {
+
+            ?relationship a kgdm:Relationship.
+            OPTIONAL {?relationship rdfs:label ?relationship_label.}
+            OPTIONAL {?relationship kgdm:Description ?relationship_description.}
+            
+            ?subject_role kgdm:subjectRoleIsPartOfRelationship ?relationship; 
+                kgdm:subjectRoleIsAssociatedWithEntity ?relationship_from_entity;
+                a kgdm:SubjectRole.
+
+            ?object_role kgdm:objectRoleIsPartOfRelationship ?relationship;
+                kgdm:objectRoleIsAssociatedWithEntity ?relationship_to_entity;
+                a kgdm:ObjectRole.
+
+            OPTIONAL {?relationship_to_entity rdfs:label ?relationship_to_entity_label.}
+            OPTIONAL {?relationship_from_entity rdfs:label ?relationship_from_entity_label.}
+            OPTIONAL {?object_role kgdm:RoleCardinality ?object_role_cardinality.}
+            OPTIONAL {?object_role kgdm:RoleOptionality ?object_role_optionality.}
+            OPTIONAL {?subject_role kgdm:RoleCardinality ?subject_role_cardinality.} 
+            OPTIONAL {?subject_role kgdm:RoleOptionality ?subject_role_optionality.}
+        }
