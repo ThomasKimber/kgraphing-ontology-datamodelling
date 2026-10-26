@@ -7,7 +7,7 @@ from rdflib import URIRef, BNode, Literal, Namespace
 
 from kgraphing.ingest import kgpipeline
 from kgraphing.store import metadata, rdfquery 
-from kgraphing_ontology_datamodelling.sparql.queries.queries import dependencyQ, infer_key_types_q, infer_leaf_entities_q
+from kgraphing_ontology_datamodelling.queries import dependencyQ, infer_key_types_q, infer_leaf_entities_q
 
 DMPipeline = partial(kgpipeline.KGraphPipeline,
     mapping_config_location=str(files('kgraphing_ontology_datamodelling.mapping').joinpath("kgdm_mapping.json")),
