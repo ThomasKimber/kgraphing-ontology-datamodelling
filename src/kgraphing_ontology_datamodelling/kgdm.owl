@@ -268,9 +268,9 @@ Contrast with isPartOf which defines dependent, compositional relationships that
     
 
 
-    <!-- https://kgraph.foo/onto/datamodelling#AttributeOptionality -->
+    <!-- https://kgraph.foo/onto/datamodelling#AttributeIsOptional -->
 
-    <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#AttributeOptionality">
+    <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#AttributeIsOptional">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Attribute"/>
     </owl:DatatypeProperty>

@@ -589,7 +589,7 @@
 
         {
 
-            "Predicate": "https://kgraph.foo/onto/datamodelling#AttributeOptionality",
+            "Predicate": "https://kgraph.foo/onto/datamodelling#AttributeIsOptional",
             "Instances": [
                 {
                     "InstanceName": "AttributeOptionality",

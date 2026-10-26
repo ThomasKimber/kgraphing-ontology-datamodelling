@@ -60,3 +60,8 @@ Q_get_object_by_label = rdfquery.QueryAPI("Get Object By Label",
                                          "type" : URIRef},
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#"})
 
+Q_entity_attribute_sheet = rdfquery.QueryAPI("Entity and Attribute Sheet",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('entity_attribute_sheet.sparql').read_text(encoding="utf-8"),
+                             description="Report showing entities and their attributes with PK/FK flags.",
+                             parameters={"entity" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#"})

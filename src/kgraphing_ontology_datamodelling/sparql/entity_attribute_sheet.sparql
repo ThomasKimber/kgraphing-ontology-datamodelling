@@ -1,0 +1,46 @@
+    SELECT DISTINCT 
+    
+            ?entity 
+            ?entity_label 
+            ?entity_description 
+            ?attribute 
+            ?attribute_label 
+            ?a_sequence 
+            ?attribute_description 
+            ?domain 
+            ?domain_label 
+            ?optional
+            ?isPK
+            ?isFK 
+            
+    WHERE 
+    
+        { 
+
+            ?entity a kgdm:Entity.
+            OPTIONAL {?entity rdfs:label ?entity_label.}
+            OPTIONAL {?entity kgdm:Description ?entity_description.}
+            
+            OPTIONAL { ?attribute a kgdm:Attribute;
+                           kgdm:attributeIsPartOfEntity ?entity;            
+                           OPTIONAL { ?attribute rdfs:label ?attribute_label.}
+                           OPTIONAL {?attribute kgdm:ElementSequence ?a_sequence.}
+                           OPTIONAL {?attribute kgdm:Description ?attribute_description.}
+                           OPTIONAL {?attribute kgdm:AttributeIsOptional ?optional.}
+                    }
+
+            OPTIONAL {?attribute kgdm:attributeisMemberOfDomain ?domain.
+                      ?domain a kgdm:Domain.
+                      OPTIONAL {?domain rdfs:label ?domain_label.}
+                      }
+            
+            BIND (EXISTS {
+                        ?attribute kgdm:attributeisMemberOfKey ?k.
+                        ?k a kgdm:ForeignKey.
+                        } AS ?isFK)
+            BIND (EXISTS {
+                        ?attribute kgdm:attributeisMemberOfKey ?k.
+                        ?k a kgdm:PrimaryKey.
+                    } AS ?isPK)
+
+        }
