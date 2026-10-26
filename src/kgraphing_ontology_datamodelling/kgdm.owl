@@ -25,6 +25,26 @@
     
 
 
+    <!-- https://kgraph.foo/onto/datamodelling#attributeIsMemberOfDomain -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#attributeIsMemberOfDomain">
+        <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isMemberOf"/>
+        <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Attribute"/>
+        <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Domain"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#attributeIsMemberOfKey -->
+
+    <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#attributeIsMemberOfKey">
+        <rdfs:subPropertyOf rdf:resource="https://kgraph.foo/onto/datamodelling#isMemberOf"/>
+        <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Attribute"/>
+        <rdfs:range rdf:resource="https://kgraph.foo/onto/datamodelling#Key"/>
+    </owl:ObjectProperty>
+    
+
+
     <!-- https://kgraph.foo/onto/datamodelling#attributeIsPartOfEntity -->
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#attributeIsPartOfEntity">
@@ -97,6 +117,7 @@ In this context, a hierarchy is a tree where children can only have one parent. 
 
     <owl:ObjectProperty rdf:about="https://kgraph.foo/onto/datamodelling#isDependentOn">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:comment>A relationship that exists where an entity references another entity via a relationship in a model.</rdfs:comment>
     </owl:ObjectProperty>
     
 

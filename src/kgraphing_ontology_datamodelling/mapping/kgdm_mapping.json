@@ -331,17 +331,26 @@
                         "SubjectTag": "Entity",
                         "ObjectTag": "SubjectArea",
                         "EnableMultiValues": true
-                    },                    
-                    {
-                        "InstanceName": "AttributeIsMemberOfKey",
-                        "SubjectTag": "EntityKeyAttributes",
-                        "ObjectTag": "EntityKey",
-                        "EnableMultiValues": true
-                    },
+                    }
+                ]
+            },
+            {
+                "Predicate": "https://kgraph.foo/onto/datamodelling#attributeisMemberOfDomain", 
+                "Instances": [
                     {
                         "InstanceName": "AttributeIsMemberOfDomain",
                         "SubjectTag": "Attribute",
                         "ObjectTag": "AttributeDomain",
+                        "EnableMultiValues": true
+                    }                ]
+            },
+            {
+                "Predicate": "https://kgraph.foo/onto/datamodelling#attributeisMemberOfKey", 
+                "Instances": [
+                    {
+                        "InstanceName": "AttributeIsMemberOfKey",
+                        "SubjectTag": "EntityKeyAttributes",
+                        "ObjectTag": "EntityKey",
                         "EnableMultiValues": true
                     }
                 ]

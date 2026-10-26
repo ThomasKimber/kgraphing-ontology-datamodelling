@@ -69,6 +69,18 @@ class Visualisation:
         return self.nx_graph
     
 
-    def to_gravis(self):
+    def to_gravis_vis(self):
         
         return gravis.vis(self.nx_graph, **self.vis_graph_settings)
+
+    def to_gravis_d3(self):
+        
+        return gravis.vis(self.nx_graph, **self.vis_graph_settings)
+
+    def to_gravis_three(self):
+        return gravis.three(self.nx_graph, **{k:v for k,v in self.vis_graph_settings.items() if k not in ("layout_algorithm", 
+                                                                                                     "central_gravity", 
+                                                                                                     "gravitational_constant", 
+                                                                                                     "spring_constant", 
+                                                                                                     "spring_length", 
+                                                                                                     "avoid_overlap")})

@@ -1,11 +1,14 @@
 from functools import partial
-
-from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
-from kgraphing import setfunctions
-from kgraphing import gerf
-from kgraphing.visgerf import VisGerf
 from rdflib.namespace import RDF, RDFS, OWL
 from rdflib import URIRef, BNode, Literal, Namespace
+
+
+from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
+from kgraphing import setfunctions, gerf
+
+from kgraphing.visgerf import VisGerf
+
+
 
 KGDM = Namespace(URIRef("https://kgraph.foo/onto/datamodelling#"))
 
@@ -43,6 +46,8 @@ def include_edge_function(gerf_object, identifier, predicate, element):
                            KGDM.objectRoleIsAssociatedWithEntity,
                            KGDM.attributeIsPartOfEntity,
                            KGDM.isMemberOf,
+                           KGDM.attributeisMemberOfDomain,
+                           KGDM.attributeisMemberOfKey,
                           ),
             ]
     return all(tests)
@@ -120,7 +125,7 @@ edge_styles = {
     frozenset({}) : {
         "color" : "black",
         "opacity" : 1.0,
-        "size": 2.0,
+        "size": 1.0,
         "arrow_color": "black",
         "arrow_size": 5.0,
         "label_color": "black",
@@ -128,7 +133,7 @@ edge_styles = {
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#isDependentOn')}) : {
         "color" : "red",
         "opacity" : 1.0,
-        "size": 5.0,
+        "size": 3.0,
         "arrow_color": "red",
         "arrow_size": 10.0,
         "label_color": "black",
