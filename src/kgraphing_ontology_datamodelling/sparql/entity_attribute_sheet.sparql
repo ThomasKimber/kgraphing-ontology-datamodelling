@@ -5,6 +5,7 @@
             ?entity_name
             ?entity_label 
             ?entity_description 
+            ?entity_is_leaf
             ?attribute 
             ?attribute_qualified_name
             ?attribute_name
@@ -29,6 +30,7 @@
                 kgnam:Name ?entity_name.
             OPTIONAL {?entity rdfs:label ?entity_label.}
             OPTIONAL {?entity kgdm:Description ?entity_description.}
+            OPTIONAL {?entity kgdm:isLeafEntity ?entity_is_leaf.}
             
             OPTIONAL { ?attribute a kgdm:Attribute;
                            kgnam:FullyQualifiedName ?attribute_qualified_name;

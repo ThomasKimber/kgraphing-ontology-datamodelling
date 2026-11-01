@@ -17,14 +17,15 @@ from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q
 from kgraphing.store import rdfquery
 
 def svg_to_urldata(svg : str)->str:
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.svg', delete=False) as tmp:
-        tmp.write(svg)
-        virtual_filename = tmp.name  # This is the string path you pass to the API
-        image_data = convert.image_to_data_url(virtual_filename, 'svg', return_data_format=False)
-        return image_data
+    #with tempfile.NamedTemporaryFile(mode='w', suffix='.svg', delete=False) as tmp:
+    #    tmp.write(svg)
+    #    virtual_filename = tmp.name  # This is the string path you pass to the API
+    #    image_data = convert.image_to_data_url(virtual_filename, 'svg', return_data_format=False)
+    #    return image_data
+    base64text=render.base64_text_to_data_url(svg,data_format="svg")
+    return render.base64_text_to_data_url(base64text, "png")
 
 def png_bytes_to_urldata(img : bytes)->str:
-    print(len(img))
     #with tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False) as tmp:
     #    tmp.write(img)
     #    virtual_filename = tmp.name  # This is the string path you pass to the API
@@ -180,7 +181,8 @@ class ModelEntityClass(ModelThingClass):
                         description : str,
                         uri : URIRef,
                         qualified_name : str,
-                        attribute_list : list[ModelAttributeClass]
+                        attribute_list : list[ModelAttributeClass],
+                        is_leaf : bool
                         ):
         self.name=name
         self.label=label
@@ -188,6 +190,7 @@ class ModelEntityClass(ModelThingClass):
         self.uri=uri
         self.qualified_name=qualified_name
         self.attribute_list=attribute_list
+        self.is_leaf=is_leaf
 
     @classmethod
     def from_entity_attribute_sheet(cls, df : DataFrame)-> Self:
@@ -198,6 +201,7 @@ class ModelEntityClass(ModelThingClass):
                         "uri" : row.entity,
                         "qualified_name" : row.entity_qualified_name,
                         "attribute_list" : ModelAttributeClass.attribute_list_from_entity_attribute_sheet(df),
+                        "is_leaf" : row.entity_is_leaf
         })
 
     def attribute_list_to_dataframe(self) -> DataFrame:
@@ -246,10 +250,14 @@ class ModelEntityClass(ModelThingClass):
         svg_panel_style = svgsystem.SVGPanelStyle(
             title_bar_fill="lightblue",
             panel_canvas_fill="white",
-            opacity=0.5,
+            opacity=1.0,
             stroke_width="2px"
             )
-
+        if self.is_leaf:
+            corner_radii=(0,0,0,0)
+        else:
+            corner_radii=(20,20,20,20)
+        
         panel = svgsystem.SVGTitledPanelFromContent(
             identifier=self.qualified_name,
             title_text=f"<b>{self.name}</b>",
@@ -257,13 +265,13 @@ class ModelEntityClass(ModelThingClass):
             title_font_size=12,
             title_margins=(10,5,5,5),
             content_element=panel_content, 
-            corner_radii=(0,0,0,0),
+            corner_radii=corner_radii,
             content_margins=(10,5,5,2),
             panel_style=svg_panel_style,
         )
 
         
-        v_bounds = panel.bounds[0]-3,panel.bounds[1]-3,panel.bounds[2]+3, panel.bounds[3]+3
+        v_bounds = panel.bounds[0]-3,panel.bounds[1]-2,panel.bounds[2]+5, panel.bounds[3]+3
         vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
 
         viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
@@ -340,7 +348,7 @@ class ModelRoleClass(ModelThingClass):
                 else:
                     shape=svgsystem.SVGRectangleWithSpokes(0,0,20,20,2,7,30,fill="none", stroke="black", stroke_width=2)
 
-        v_bounds = shape.bounds[0],shape.bounds[1],shape.bounds[2], shape.bounds[3]
+        v_bounds = shape.bounds[0]-2,shape.bounds[1]-2,shape.bounds[2]+4, shape.bounds[3]+4
         vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
 
         viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
@@ -392,12 +400,14 @@ styles_by_type = {
                URIRef('https://kgraph.foo/onto/datamodelling#SubjectRole')}) : 
                                                                                 { "color" : "#fff", 
                                                                                 "shape" : "circle", 
-                                                                                "size" : 15},
+                                                                                "size" : 15,
+                                                                                "label_size" : 5},
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Role'), 
                URIRef('https://kgraph.foo/onto/datamodelling#ObjectRole')}) : 
                                                                                 { "color" : "#fff", 
                                                                                 "shape" : "circle", 
-                                                                                "size" : 15},
+                                                                                "size" : 15,
+                                                                                "label_size" : 5},
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Relationship')}) : { "color" : "#ff931b", 
                                                                                 "shape" : "circle", 
                                                                                 "size" : 3,
@@ -409,7 +419,7 @@ styles_by_type = {
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Entity')}) : { "color" : "#fff", 
                                                                                 "shape" : "rectangle", 
                                                                                 "size" : 100, 
-                                                                                "label_size" : 30},
+                                                                                "label_size" : 50},
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Key'),
               URIRef('https://kgraph.foo/onto/datamodelling#PrimaryKey')}) : { "color" : "#5d69e3"}, 
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Key'),
@@ -427,7 +437,7 @@ node_styles = {
         "border_color": "",
         "border_size": 1.0,
         "label_color": "",
-        "label_size": 1.0,
+        "label_size": 2.4,
         "hover": "",
         "click": "",
         "image" : "",
@@ -483,17 +493,17 @@ edge_styles = {
 vis_graph_settings = {
     "node_label_data_source" : "label", 
     "node_size_data_source" : "size", 
-    "node_label_size_factor" : 1.5, 
+    "node_label_size_factor" : 2.5, 
     "node_size_factor" : 3.0, 
     "edge_size_data_source" : "size", 
     "edge_label_data_source" : "label", 
     "edge_size_factor" : 2.5, 
-    "show_edge_label" : True,
+    "show_edge_label" : False,
     "edge_curvature" : 0.2,
     "graph_height" : 800,
     "details_height" : 300, 
     "layout_algorithm" : "forceAtlas2Based", 
-    "central_gravity" : 0.5, 
+    "central_gravity" : 1.5, 
     "gravitational_constant" : -10000,
     "spring_constant" : 0.51,
     "spring_length" : 40,
@@ -585,7 +595,6 @@ def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,
             case KGDM.Relationship:
                 pass
             case KGDM.SubjectRole | KGDM.ObjectRole:
-                print(f"!{node_id}")
                 role_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_role_sheet.execute(
                     graph,
                     {"role" : node_id}
