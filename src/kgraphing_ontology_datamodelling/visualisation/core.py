@@ -1,13 +1,19 @@
 """Template for a visgerf style visualisation - classes import from this
 template for specific use-cases"""
-from typing import Callable, Optional, Any
+from typing import Callable, Optional, Any, Self
+from pandas import DataFrame, Series
+from networkx import MultiDiGraph
+from rdflib import URIRef
+from functools import partial
+import inspect
+
+import gravis
 from kgraphing.visgerf import VisGerf
 from kgraphing.gerf import Gerf
 from kgraphing import nxproperties
-from networkx import MultiDiGraph
-from functools import partial
-import gravis
-import inspect
+
+
+
 
 class ClassificationPass:
     def __init__(self, 

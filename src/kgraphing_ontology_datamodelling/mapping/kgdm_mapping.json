@@ -597,6 +597,17 @@
                     "LiteralTag": "AttributeNulls"
                 }
         ]
+    },
+   {
+
+            "Predicate": "https://kgraph.foo/onto/datamodelling#KeyType",
+            "Instances": [
+                {
+                    "InstanceName": "EntityKeyTypeProperty",
+                    "SubjectTag": "EntityKey",
+                    "LiteralTag": "EntityKeyType"
+                }
+        ]
     }
     ]
 }

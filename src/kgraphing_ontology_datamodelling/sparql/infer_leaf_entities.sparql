@@ -13,7 +13,6 @@ WHERE
         ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
             a kgdm:ObjectRole;
                 kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
-        
 
                 } as ?leaf_test)
 }

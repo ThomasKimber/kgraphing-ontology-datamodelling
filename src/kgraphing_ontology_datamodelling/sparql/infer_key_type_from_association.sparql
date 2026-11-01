@@ -19,4 +19,28 @@ CONSTRUCT
         ?subjectRole a kgdm:SubjectRole.
         VALUES ?o {kgdm:ForeignKey}
     }
+    UNION
+    {
+        ?s a kgdm:Key;
+            kgdm:KeyType ?key_type_string.
+        FILTER(STR(?key_type_string)="Primary Key")
+        VALUES ?o {kgdm:PrimaryKey}
+    }
+
+    UNION
+
+    {
+        ?s a kgdm:Key;
+            kgdm:KeyType ?key_type_string.
+        FILTER(STR(?key_type_string)="Foreign Key")
+        VALUES ?o {kgdm:ForeignKey}
+    }
+    UNION
+
+    {
+        ?s a kgdm:Key;
+            kgdm:KeyType ?key_type_string.
+        FILTER(STR(?key_type_string)="Unique Key")
+        VALUES ?o {kgdm:UniqueKey}
+    }
 }

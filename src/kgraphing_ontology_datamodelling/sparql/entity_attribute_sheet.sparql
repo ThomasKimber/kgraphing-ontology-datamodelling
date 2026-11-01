@@ -1,14 +1,21 @@
     SELECT DISTINCT 
     
             ?entity 
+            ?entity_qualified_name
+            ?entity_name
             ?entity_label 
             ?entity_description 
             ?attribute 
+            ?attribute_qualified_name
+            ?attribute_name
             ?attribute_label 
-            ?a_sequence 
+            ?attribute_sequence 
             ?attribute_description 
             ?domain 
+            ?domain_qualified_name
+            ?domain_name
             ?domain_label 
+            ?domain_description 
             ?optional
             ?isPK
             ?isFK 
@@ -17,21 +24,28 @@
     
         { 
 
-            ?entity a kgdm:Entity.
+            ?entity a kgdm:Entity;
+                kgnam:FullyQualifiedName ?entity_qualified_name;
+                kgnam:Name ?entity_name.
             OPTIONAL {?entity rdfs:label ?entity_label.}
             OPTIONAL {?entity kgdm:Description ?entity_description.}
             
             OPTIONAL { ?attribute a kgdm:Attribute;
-                           kgdm:attributeIsPartOfEntity ?entity;            
-                           OPTIONAL { ?attribute rdfs:label ?attribute_label.}
-                           OPTIONAL {?attribute kgdm:ElementSequence ?a_sequence.}
-                           OPTIONAL {?attribute kgdm:Description ?attribute_description.}
-                           OPTIONAL {?attribute kgdm:AttributeIsOptional ?optional.}
+                           kgnam:FullyQualifiedName ?attribute_qualified_name;
+                           kgnam:Name ?attribute_name;
+                           kgdm:attributeIsPartOfEntity ?entity.          
+                        OPTIONAL { ?attribute rdfs:label ?attribute_label.}
+                        OPTIONAL {?attribute kgdm:ElementSequence ?attribute_sequence.}
+                        OPTIONAL {?attribute kgdm:Description ?attribute_description.}
+                        OPTIONAL {?attribute kgdm:AttributeIsOptional ?optional.}
                     }
 
             OPTIONAL {?attribute kgdm:attributeisMemberOfDomain ?domain.
-                      ?domain a kgdm:Domain.
+                      ?domain a kgdm:Domain;
+                          kgnam:Name ?domain_name;
+                          kgnam:FullyQualifiedName ?domain_qualified_name.
                       OPTIONAL {?domain rdfs:label ?domain_label.}
+                      OPTIONAL {?domain kgdm:Description ?domain_description.}
                       }
             
             BIND (EXISTS {

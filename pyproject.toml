@@ -11,6 +11,7 @@ requires-python = ">=3.12"
 dependencies = [
     "gravis",
     "kgraphing",
+    "svgtext",
 ]
 
 [tool.uv]
@@ -22,3 +23,4 @@ packages = ["src/kgraphing_ontology_datamodelling"]
 [tool.uv.sources]
 kgraphing = { git = "https://github.com/ThomasKimber/kgraph", branch = "main" }
 gravis = { url = "https://github.com/raufs/gravis/archive/refs/tags/v0.1.1.tar.gz" }
+svgtext = { git = "https://github.com/ThomasKimber/svgtext" }

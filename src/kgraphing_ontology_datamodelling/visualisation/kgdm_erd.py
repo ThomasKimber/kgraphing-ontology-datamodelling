@@ -1,17 +1,263 @@
+from typing import Callable, Optional, Any, Self
+import io
+import tempfile
 from functools import partial
 from rdflib.namespace import RDF, RDFS, OWL
 from rdflib import URIRef, BNode, Literal, Namespace
+from pandas import DataFrame, Series
+from gravis import convert
 
-
+from svgtext import svgsystem, htmltext
 from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
 from kgraphing import setfunctions, gerf
-
 from kgraphing.visgerf import VisGerf
+from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet
+from kgraphing.store import rdfquery
 
+def svg_to_urldata(svg : str)->str:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp:
+        tmp.write(svg)
+        virtual_filename = tmp.name  # This is the string path you pass to the API
+        image_data = convert.image_to_data_url(virtual_filename, 'svg')
+        return image_data
 
+def svg_optional_single_key_function():
+    return svgsystem.SVGCircleWithSpokes(r=10,
+                                         cx=0,
+                                         cy=0,
+                                         spokes=2,
+                                         spoke_radius=6,
+                                         rot_degrees=30,
+                                         fill="none", 
+                                         stroke="black", 
+                                         stroke_width=1)
+
+def svg_optional_multi_key_function():
+    return svgsystem.SVGCircleWithSpokes(r=10,
+                                         cx=0,
+                                         cy=0,
+                                         spokes=6,
+                                         spoke_radius=6,
+                                         fill="none", 
+                                         stroke="black", 
+                                         stroke_width=1)
+
+def svg_mandatory_single_key_function():
+    return svgsystem.SVGRectangleWithSpokes(x=0,
+                                         y=0,
+                                         width=20,
+                                         height=20,
+                                         spokes=2,
+                                         spoke_radius=7,
+                                         rot_degrees=30,
+                                         fill="none", 
+                                         stroke="black", 
+                                         stroke_width=1)
+
+def svg_mandatory_multi_key_function():
+    return svgsystem.SVGRectangleWithSpokes(x=0,
+                                         y=0,
+                                         width=20,
+                                         height=20,
+                                         spokes=6,
+                                         spoke_radius=7,
+                                         rot_degrees=30,
+                                         fill="none", 
+                                         stroke="black", 
+                                         stroke_width=1)
 
 KGDM = Namespace(URIRef("https://kgraph.foo/onto/datamodelling#"))
 
+class ModelThingClass:
+    name : str
+    label : str
+    description : str
+    uri : URIRef
+    qualified_name : str
+
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+
+class ModelDomainClass(ModelThingClass):
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+
+    @classmethod
+    def from_entity_attribute_row(cls, row : Series)-> Self:
+        return cls(**{"name" : row.domain_name, 
+                      "label" : row.domain_label, 
+                      "description" : row.domain_description, 
+                      "uri" : row.domain, 
+                      "qualified_name" : row.domain_qualified_name            
+        })
+    
+class ModelAttributeClass(ModelThingClass):
+    domain : ModelDomainClass
+    sequence : int
+    optional : bool
+    isPK : bool
+    isFK : bool
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str,
+                        domain : ModelDomainClass,
+                        sequence : int, 
+                        optional : bool, 
+                        isPK : bool, 
+                        isFK : bool
+                        ):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+        self.domain=domain
+        self.sequence=sequence
+        self.optional=optional
+        self.isPK=isPK
+        self.isFK=isFK
+
+
+    @classmethod
+    def from_entity_attribute_row(cls, row : Series)-> Self:
+        
+        return cls(**{"name" : row.attribute_name,
+                      "label" : row.attribute_label,
+                      "description" : row.attribute_description,
+                      "uri" : row.attribute,
+                      "qualified_name" : row.attribute_qualified_name,
+                      "domain" : ModelDomainClass.from_entity_attribute_row(row),
+                      "sequence" : row.attribute_sequence,
+                      "optional" : row.optional,
+                      "isPK" : row.isPK,
+                      "isFK" : row.isFK
+        })
+
+    @classmethod
+    def attribute_list_from_entity_attribute_sheet(cls, df : DataFrame)-> list[Self]:
+        a_list=[]
+        for i,row in df.iterrows():
+            a_list.append(cls.from_entity_attribute_row(row))
+        return a_list
+
+class ModelEntityClass:
+    attribute_list : list[ModelAttributeClass]
+
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str,
+                        attribute_list : list[ModelAttributeClass]
+                        ):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+        self.attribute_list=attribute_list
+
+    @classmethod
+    def from_entity_attribute_sheet(cls, df : DataFrame)-> Self:
+        row = df.iloc[0]
+        return cls(**{  "name" : row.entity_name,
+                        "label" : row.entity_label,
+                        "description" : row.entity_description,
+                        "uri" : row.entity,
+                        "qualified_name" : row.entity_qualified_name,
+                        "attribute_list" : ModelAttributeClass.attribute_list_from_entity_attribute_sheet(df),
+        })
+
+    def attribute_list_to_dataframe(self) -> DataFrame:
+        frame_contents=[]
+        key_glyph_map = {
+            True : "Yes",
+            False : ""
+        }
+        for a in sorted(self.attribute_list, key=lambda x : x.sequence):
+            frame_contents.append({"Attribute" : a.name, "Type" : a.domain.name, "Optional" : a.optional, "PK" : key_glyph_map.get(a.isPK,a.isPK), "FK" : key_glyph_map.get(a.isFK,"")})
+        return DataFrame(frame_contents)
+    
+    def to_mermaid(self):
+        pass
+
+    def to_svg_component(self):
+
+        attribute_data_grid=self.attribute_list_to_dataframe()
+        
+        svg_font_registry = svgsystem.SVGFontRegistry()
+        css_style_content = svg_font_registry.css_style() + "\n".join([ """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
+                      """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
+                      ])
+        svg_attribute_data_grid = svgsystem.SVGDataGridLayout(attribute_data_grid,
+                                         {},
+                                         True,
+                                         svg_font_registry.registry['Comfortaa Regular'], 
+                                         12,
+                                         svg_font_registry.registry['DejaVu Sans Mono'],
+                                         10,
+                                         (1,10))
+        
+        entity_description_markup = htmltext.html_to_markup(self.description, 65)
+
+        entity_description_text = svgsystem.SVGMultiSpanText(entity_description_markup, 
+                                                1.0, 
+                                                svg_font_registry.registry['DejaVu Sans'],
+                                                12) 
+        
+        panel_content = svgsystem.SVGVerticalComposite(contents=[entity_description_text,svg_attribute_data_grid],
+                    padding=5)
+        
+        
+        svg_panel_style = svgsystem.SVGPanelStyle(
+            title_bar_fill="lightblue",
+            panel_canvas_fill="white",
+            opacity=0.5
+            )
+
+        panel = svgsystem.SVGTitledPanelFromContent(
+            identifier=self.qualified_name,
+            title_text=f"<b>{self.name}</b>",
+            title_font=svg_font_registry.registry['Comfortaa Regular'], 
+            title_font_size=12,
+            title_margins=(10,5,5,5),
+            content_element=panel_content, 
+            corner_radii=(0,0,0,0),
+            content_margins=(10,5,5,2),
+            panel_style=svg_panel_style
+        )
+
+        
+        v_bounds = panel.bounds[0]-20,panel.bounds[1]-20,panel.bounds[2]+30, panel.bounds[3]+20
+        vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
+
+        viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
+
+        defs_block = f"""<defs><style type="text/css">{css_style_content}</style></defs>"""
+
+        svg_image = viewbox.replace("%%placeholder%%", 
+                            defs_block +\
+                            str(panel))
+        return svg_image
+        
 def include_node_function(gerf_object, identifier):
     empty_node=gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_object)
     test_node = gerf_object.entities.get(identifier, empty_node)
@@ -170,7 +416,7 @@ def classify_node_by_gerf_property(id, data, gerf_data, property_uri, key_set):
 def classify_edge_on_data_predicate(id, data, gerf_data, property_uri, key_set):
     empty_node = gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_data)
     property_values = set([data.get('predicate')])
-    candidate_keys = {e:k for e,k in enumerate(key_set)}
+    candidate_keys = {e:frozenset(k) for e,k in enumerate(key_set)}
     matching_keys = {k:v for k,v in setfunctions.venn_partitions({**{"Q" : property_values}, **{e:set(k) for e,k in candidate_keys.items()}}, 
                                          notation_style="binindex").items() if 'Q' in k}
     
@@ -204,7 +450,45 @@ def classify_edge_entity_by_gerf_property(id, data, gerf_data, property_uri, key
     else:
         return None
 
+def classify_node_by_identity(id, data, gerf_data, property_uri, key_set):
+    return id
 
+def erd_gen_style_contents_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,Any]]:
+    empty_node = gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_data)
+    node_type = gerf_data.entities.get(node_id, empty_node).interactions.get(RDF.type,set())
+    key_set = {frozenset({KGDM.Entity}) : KGDM.Entity, 
+               frozenset({KGDM.SubjectRole}) : KGDM.SubjectRole, 
+               frozenset({KGDM.ObjectRole}) : KGDM.ObjectRole, 
+               frozenset({KGDM.Relationship}) : KGDM.Relationship}
+    candidate_keys = {e:k for e,k in enumerate(key_set)}
+    matching_keys = {k:v for k,v in setfunctions.venn_partitions({**{"Q" : node_type}, **{e:set(k) for e,k in candidate_keys.items()}}, 
+                                         notation_style="binindex").items() if 'Q' in k}
+    
+    matching_candidates = {k:v for k,v in candidate_keys.items() if k in { m for y in matching_keys for m in y}}
+    best_keys = sorted([(k, setfunctions.lir_stats(node_type, val)) for k,val in matching_candidates.items()], key=lambda x : x[1][2], reverse=True)
+    style_contents={}
+    if len(best_keys)>0:
+        match key_set[candidate_keys[best_keys[0][0]]]:
+            case KGDM.Entity:
+                entity_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_entity_attribute_sheet.execute(
+                    graph, 
+                    {"entity" : node_id}
+                    )))
+                mec = ModelEntityClass.from_entity_attribute_sheet(entity_sheet_df)
+                svg = mec.to_svg_component()
+
+                style_contents = {node_id : {"image": svg_to_urldata(svg)
+                            }}
+            case KGDM.Relationship:
+                pass
+            case KGDM.SubjectRole,KGDM.ObjectRole:
+                pass
+            case KGDM.ObjectRole:
+                pass
+            
+
+
+    return style_contents
 
 classify_nodes_on_type = ClassificationPass(
     classification_function=classify_node_by_gerf_property,

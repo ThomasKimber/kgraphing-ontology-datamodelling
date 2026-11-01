@@ -273,6 +273,7 @@ Contrast with isPartOf which defines dependent, compositional relationships that
     <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#AttributeIsOptional">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Attribute"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
     </owl:DatatypeProperty>
     
 
@@ -295,11 +296,44 @@ Contrast with isPartOf which defines dependent, compositional relationships that
     
 
 
+    <!-- https://kgraph.foo/onto/datamodelling#KeyType -->
+
+    <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#KeyType">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Key"/>
+        <rdfs:range>
+            <rdfs:Datatype>
+                <owl:oneOf>
+                    <rdf:Description>
+                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                        <rdf:first>Foreign Key</rdf:first>
+                        <rdf:rest>
+                            <rdf:Description>
+                                <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                <rdf:first>Primary Key</rdf:first>
+                                <rdf:rest>
+                                    <rdf:Description>
+                                        <rdf:type rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#List"/>
+                                        <rdf:first>Unique Key</rdf:first>
+                                        <rdf:rest rdf:resource="http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"/>
+                                    </rdf:Description>
+                                </rdf:rest>
+                            </rdf:Description>
+                        </rdf:rest>
+                    </rdf:Description>
+                </owl:oneOf>
+            </rdfs:Datatype>
+        </rdfs:range>
+    </owl:DatatypeProperty>
+    
+
+
     <!-- https://kgraph.foo/onto/datamodelling#RelationshipOptionality -->
 
     <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#RelationshipOptionality">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Relationship"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
     </owl:DatatypeProperty>
     
 
@@ -309,6 +343,16 @@ Contrast with isPartOf which defines dependent, compositional relationships that
     <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#RoleCardinality">
         <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
         <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Role"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- https://kgraph.foo/onto/datamodelling#isLeafEntity -->
+
+    <owl:DatatypeProperty rdf:about="https://kgraph.foo/onto/datamodelling#isLeafEntity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="https://kgraph.foo/onto/datamodelling#Entity"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
     </owl:DatatypeProperty>
     
 
