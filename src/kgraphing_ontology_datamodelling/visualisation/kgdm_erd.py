@@ -9,19 +9,31 @@ from rdflib import URIRef, BNode, Literal, Namespace
 from pandas import DataFrame, Series
 from gravis import convert
 
-from svgtext import svgsystem, htmltext
+from svgtext import svgsystem, htmltext, render
 from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
 from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
-from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet
+from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_sheet
 from kgraphing.store import rdfquery
 
 def svg_to_urldata(svg : str)->str:
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp:
+    with tempfile.NamedTemporaryFile(mode='w', suffix='.svg', delete=False) as tmp:
         tmp.write(svg)
         virtual_filename = tmp.name  # This is the string path you pass to the API
         image_data = convert.image_to_data_url(virtual_filename, 'svg', return_data_format=False)
         return image_data
+
+def png_bytes_to_urldata(img : bytes)->str:
+    print(len(img))
+    #with tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False) as tmp:
+    #    tmp.write(img)
+    #    virtual_filename = tmp.name  # This is the string path you pass to the API
+    #    image_data = convert.image_to_data_url(virtual_filename, 'png', return_data_format=False)
+    #    tmp.flush()
+    #    return image_data
+    base64text=render.binary_data_to_base64_text(img)
+    return render.base64_text_to_data_url(base64text, "png")
+
 
 def svg_optional_single_key_function():
     return svgsystem.SVGCircleWithSpokes(r=10,
@@ -160,7 +172,7 @@ class ModelAttributeClass(ModelThingClass):
             a_list.append(cls.from_entity_attribute_row(row))
         return a_list
 
-class ModelEntityClass:
+class ModelEntityClass(ModelThingClass):
     attribute_list : list[ModelAttributeClass]
 
     def __init__(self,  name : str,
@@ -206,7 +218,7 @@ class ModelEntityClass:
         attribute_data_grid=self.attribute_list_to_dataframe()
         
         svg_font_registry = svgsystem.SVGFontRegistry()
-        print(svg_font_registry.registry)
+
         css_style_content = svg_font_registry.css_style(include_fonts=['Comfortaa Regular', 'DejaVu Sans', 'DejaVu Sans Mono']) + "\n".join([ 
             """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
             """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
@@ -234,7 +246,8 @@ class ModelEntityClass:
         svg_panel_style = svgsystem.SVGPanelStyle(
             title_bar_fill="lightblue",
             panel_canvas_fill="white",
-            opacity=0.5
+            opacity=0.5,
+            stroke_width="2px"
             )
 
         panel = svgsystem.SVGTitledPanelFromContent(
@@ -246,11 +259,11 @@ class ModelEntityClass:
             content_element=panel_content, 
             corner_radii=(0,0,0,0),
             content_margins=(10,5,5,2),
-            panel_style=svg_panel_style
+            panel_style=svg_panel_style,
         )
 
         
-        v_bounds = panel.bounds[0]-20,panel.bounds[1]-20,panel.bounds[2]+30, panel.bounds[3]+20
+        v_bounds = panel.bounds[0]-3,panel.bounds[1]-3,panel.bounds[2]+3, panel.bounds[3]+3
         vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
 
         viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
@@ -261,7 +274,85 @@ class ModelEntityClass:
                             defs_block +\
                             str(panel))
         return svg_image, vb_bounds
-        
+
+class ModelRoleClass(ModelThingClass):
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str,
+                        subtype : str, 
+                        is_optional : bool, 
+                        has_many : bool
+                        ):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+        self.subtype=subtype
+        self.is_optional=is_optional
+        self.has_many=has_many
+
+        # Handle spurious data options:
+        if not isinstance(self.is_optional, bool):
+            if str(self.is_optional).lower().strip() in ("yes", "y", "true", "optional", "1"):
+                self.is_optional=True
+            else:
+                self.is_optional=False
+
+        if not isinstance(self.has_many, bool):
+            if str(self.has_many).lower().strip() in ("many", "m", "true", "*"):
+                self.has_many=True
+            else:
+                self.has_many=False
+
+
+    @classmethod
+    def from_role_sheet(cls, df : DataFrame)-> Self:
+        row = df.iloc[0]
+        return cls(**{  "name" : "blank",
+                        "label" : "blank",
+                        "description" : "blank",
+                        "uri" : row.role,
+                        "qualified_name" : "blank",
+                        "subtype" : row.role_type, 
+                        "is_optional" : row.role_optionality, 
+                        "has_many" : row.role_cardinality 
+                        
+        })
+
+    def to_svg_component(self):
+        css_style_content = "\n".join([ 
+            """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
+            """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""])
+
+        match self.is_optional:
+            case True:
+                if self.has_many:
+                    shape=svgsystem.SVGCircleWithSpokes(10,0,0,6,7,fill="none", stroke="black", stroke_width=2)
+                else:
+                    shape=svgsystem.SVGCircleWithSpokes(10,0,0,2,7,30,fill="none", stroke="black", stroke_width=2)
+
+            case False:
+                if self.has_many:
+                    shape=svgsystem.SVGRectangleWithSpokes(0,0,20,20,6,7,fill="none", stroke="black", stroke_width=2)
+                else:
+                    shape=svgsystem.SVGRectangleWithSpokes(0,0,20,20,2,7,30,fill="none", stroke="black", stroke_width=2)
+
+        v_bounds = shape.bounds[0],shape.bounds[1],shape.bounds[2], shape.bounds[3]
+        vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
+
+        viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
+
+        defs_block = f"""<defs><style type="text/css">{css_style_content}</style></defs>"""
+
+        svg_image = viewbox.replace("%%placeholder%%", 
+                            defs_block +\
+                            str(shape))
+        return svg_image, vb_bounds
+
+
 def include_node_function(gerf_object, identifier):
     empty_node=gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_object)
     test_node = gerf_object.entities.get(identifier, empty_node)
@@ -286,7 +377,9 @@ def include_edge_function(gerf_object, identifier, predicate, element):
                            KGDM.subjectRoleIsPartOfRelationship, 
                            KGDM.objectRoleIsPartOfRelationship,
                            KGDM.subjectRoleIsAssociatedWithEntity,
-                           KGDM.objectRoleIsAssociatedWithEntity
+                           KGDM.objectRoleIsAssociatedWithEntity,
+                           #KGDM.isDependentOn,
+                           KGDM.layoutBreadcrumb
                           ),
             ]
     return all(tests)
@@ -297,13 +390,13 @@ styles_by_type = {
 
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Role'), 
                URIRef('https://kgraph.foo/onto/datamodelling#SubjectRole')}) : 
-                                                                                { "color" : "#b14200", 
-                                                                                "shape" : "hexagon", 
+                                                                                { "color" : "#fff", 
+                                                                                "shape" : "circle", 
                                                                                 "size" : 15},
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Role'), 
                URIRef('https://kgraph.foo/onto/datamodelling#ObjectRole')}) : 
-                                                                                { "color" : "#b16b00", 
-                                                                                "shape" : "hexagon", 
+                                                                                { "color" : "#fff", 
+                                                                                "shape" : "circle", 
                                                                                 "size" : 15},
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Relationship')}) : { "color" : "#ff931b", 
                                                                                 "shape" : "circle", 
@@ -313,7 +406,7 @@ styles_by_type = {
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Attribute')}) : { "color" : "limegreen", 
                                                                                 "shape" : "rectangle", 
                                                                                 "size" : 10},
-    frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Entity')}) : { "color" : "#1b93ff", 
+    frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Entity')}) : { "color" : "#fff", 
                                                                                 "shape" : "rectangle", 
                                                                                 "size" : 100, 
                                                                                 "label_size" : 30},
@@ -366,18 +459,25 @@ edge_styles = {
         "opacity" : 1.0,
         "size": 1.0,
         "arrow_color": "black",
-        "arrow_size": 5.0,
+        "arrow_size": 0.0,
         "label_color": "#808080",
         "label_size": 10.0    },
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#isDependentOn')}) : {
-        "color" : "red",
+        "color" : "white",
         "opacity" : 1.0,
         "size": 3.0,
-        "arrow_color": "red",
+        "arrow_color": "white",
         "arrow_size": 10.0,
         "label_color": "black",
         "label_size": 10.0    },
-        
+    frozenset({URIRef('https://kgraph.foo/onto/datamodelling#layoutBreadcrumb')}) : {
+        "color" : "grey",
+        "opacity" : 1.0,
+        "size": 3.0,
+        "arrow_color": "black",
+        "arrow_size": 10.0,
+        "label_color": "black",
+        "label_size": 10.0    },
 }
 
 vis_graph_settings = {
@@ -393,11 +493,11 @@ vis_graph_settings = {
     "graph_height" : 800,
     "details_height" : 300, 
     "layout_algorithm" : "forceAtlas2Based", 
-    "central_gravity" : 2.5, 
-    "gravitational_constant" : -20000,
+    "central_gravity" : 0.5, 
+    "gravitational_constant" : -10000,
     "spring_constant" : 0.51,
     "spring_length" : 40,
-    "avoid_overlap" : 0.95
+    "avoid_overlap" : 0.4
     
 }
 
@@ -457,7 +557,7 @@ def classify_edge_entity_by_gerf_property(id, data, gerf_data, property_uri, key
 def classify_node_by_identity(id, data, gerf_data, property_uri, key_set):
     return id
 
-def erd_gen_style_contents_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,Any]]:
+def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,Any]]:
     empty_node = gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_data)
     node_type = gerf_data.entities.get(node_id, empty_node).interactions.get(RDF.type,set())
     key_set = {frozenset({KGDM.Entity}) : KGDM.Entity, 
@@ -470,7 +570,7 @@ def erd_gen_style_contents_for_node(graph, node_id, gerf_data)->dict[URIRef,dict
     
     matching_candidates = {k:v for k,v in candidate_keys.items() if k in { m for y in matching_keys for m in y}}
     best_keys = sorted([(k, setfunctions.lir_stats(node_type, val)) for k,val in matching_candidates.items()], key=lambda x : x[1][2], reverse=True)
-    style_contents={}
+    svg_image={}
     if len(best_keys)>0:
         match key_set[candidate_keys[best_keys[0][0]]]:
             case KGDM.Entity:
@@ -481,19 +581,23 @@ def erd_gen_style_contents_for_node(graph, node_id, gerf_data)->dict[URIRef,dict
                 mec = ModelEntityClass.from_entity_attribute_sheet(entity_sheet_df)
                 svg, bounds = mec.to_svg_component()
 
-                style_contents = {node_id : {"image": svg,
-                                             "size" : max(bounds)
-                            }}
+                svg_image = {"image": svg,"size" : 100}
             case KGDM.Relationship:
                 pass
-            case KGDM.SubjectRole,KGDM.ObjectRole:
-                pass
-            case KGDM.ObjectRole:
-                pass
-            
+            case KGDM.SubjectRole | KGDM.ObjectRole:
+                print(f"!{node_id}")
+                role_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_role_sheet.execute(
+                    graph,
+                    {"role" : node_id}
+                )))
+                mrc = ModelRoleClass.from_role_sheet(role_sheet_df)
+                svg, bounds = mrc.to_svg_component()
+                svg_image = {"image": svg,"size" : max(bounds)*2}
 
-
-    return style_contents
+    else:
+        print(f"It was a {key_set[candidate_keys[best_keys[0][0]]]}")
+    
+    return svg_image
 
 classify_nodes_on_type = ClassificationPass(
     classification_function=classify_node_by_gerf_property,

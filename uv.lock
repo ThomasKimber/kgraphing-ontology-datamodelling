@@ -1113,7 +1113,7 @@ wheels = [
 [[package]]
 name = "svgtext"
 version = "0.1.0"
-source = { git = "https://github.com/ThomasKimber/svgtext#ea250af7d73afa8528ccc779bc3cb73ba0e7a674" }
+source = { git = "https://github.com/ThomasKimber/svgtext#ca80f16b8c8f60dadd2c91ee77c2a61d8a679557" }
 dependencies = [
     { name = "fonttools" },
     { name = "pandas" },

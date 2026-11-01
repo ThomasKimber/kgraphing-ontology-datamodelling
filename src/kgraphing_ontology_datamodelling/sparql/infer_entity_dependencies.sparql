@@ -1,6 +1,8 @@
 CONSTRUCT 
 
-    {?subjectEntity kgdm:isDependentOn ?objectEntity}
+    {
+    ?subjectEntity kgdm:isDependentOn ?objectEntity.
+    }
 
     WHERE
 

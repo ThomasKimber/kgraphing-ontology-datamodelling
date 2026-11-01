@@ -10,6 +10,12 @@ dependencyQ=rdfquery.QueryAPI("Entity Dependencies",
                              parameters={},
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
+layout_breadcrumbs_q=rdfquery.QueryAPI("Layout Breadcrumbs",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('infer_layout_breadcrumbs.sparql').read_text(encoding="utf-8"),
+                             description="Infer kgdm:layoutBreadcrumb triples from graph contents.",
+                             parameters={},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
 infer_key_types_q=rdfquery.QueryAPI("Infer Key Types",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('infer_key_type_from_association.sparql').read_text(encoding="utf-8"),
@@ -68,4 +74,11 @@ Q_relationship_sheet = rdfquery.QueryAPI("Relationship Sheet",
                              parameters={"relationship" : URIRef},
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
+Q_role_sheet = rdfquery.QueryAPI("Role Sheet",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('role_sheet.sparql').read_text(encoding="utf-8"),
+                             description="Report showing roles with associated flags and properties.",
+                             parameters={"role" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
 

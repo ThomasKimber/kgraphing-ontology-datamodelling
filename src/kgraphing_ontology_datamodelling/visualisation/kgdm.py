@@ -48,6 +48,7 @@ def include_edge_function(gerf_object, identifier, predicate, element):
                            KGDM.isMemberOf,
                            KGDM.attributeisMemberOfDomain,
                            KGDM.attributeisMemberOfKey,
+                           KGDM.layoutBreadcrumb
                           ),
             ]
     return all(tests)

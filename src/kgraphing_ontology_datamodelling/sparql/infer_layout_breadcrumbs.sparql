@@ -1,0 +1,23 @@
+CONSTRUCT 
+
+    {
+    ?subjectEntity kgdm:layoutBreadcrumb ?subjectRole.
+    ?objectEntity kgdm:layoutBreadcrumb ?objectRole.
+    ?subjectRole kgdm:layoutBreadcrumb ?relationship.
+    ?objectRole kgdm:layoutBreadcrumb ?relationship.
+    }
+
+    WHERE
+
+{
+    ?relationship a kgdm:Relationship.
+
+    ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
+        a kgdm:SubjectRole;
+            kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
+
+    ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
+        a kgdm:ObjectRole;
+            kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
+    
+}
