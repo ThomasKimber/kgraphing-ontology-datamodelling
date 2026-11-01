@@ -1,0 +1,7 @@
+SELECT
+    ?subject ?label ?type
+WHERE
+    {
+        ?subject a ?type.
+        OPTIONAL {?subject rdfs:label ?label.}
+    }

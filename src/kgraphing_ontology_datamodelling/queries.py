@@ -40,12 +40,20 @@ Q_get_entity_dependants = rdfquery.QueryAPI("Get Dependants",
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
 Q_get_object_by_label = rdfquery.QueryAPI("Get Object By Label",
-                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('object_search.sparql').read_text(encoding="utf-8"),
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('object_search_on_label.sparql').read_text(encoding="utf-8"),
                              description="Return all nodes whose labels match search parameter - with optional type filter.",
                              parameters={"search" : Literal, 
                                          "type" : URIRef},
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
+Q_get_object_by_type = rdfquery.QueryAPI("Get Object By Type",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('object_search_by_type.sparql').read_text(encoding="utf-8"),
+                             description="Return all nodes whose labels match type parameter.",
+                             parameters={"type" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
 
 Q_entity_attribute_sheet = rdfquery.QueryAPI("Entity and Attribute Sheet",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('entity_attribute_sheet.sparql').read_text(encoding="utf-8"),

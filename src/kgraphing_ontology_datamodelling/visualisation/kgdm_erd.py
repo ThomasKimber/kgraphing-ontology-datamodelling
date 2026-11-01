@@ -1,6 +1,8 @@
 from typing import Callable, Optional, Any, Self
 import io
 import tempfile
+
+
 from functools import partial
 from rdflib.namespace import RDF, RDFS, OWL
 from rdflib import URIRef, BNode, Literal, Namespace
@@ -18,7 +20,7 @@ def svg_to_urldata(svg : str)->str:
     with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as tmp:
         tmp.write(svg)
         virtual_filename = tmp.name  # This is the string path you pass to the API
-        image_data = convert.image_to_data_url(virtual_filename, 'svg')
+        image_data = convert.image_to_data_url(virtual_filename, 'svg', return_data_format=False)
         return image_data
 
 def svg_optional_single_key_function():
@@ -204,8 +206,10 @@ class ModelEntityClass:
         attribute_data_grid=self.attribute_list_to_dataframe()
         
         svg_font_registry = svgsystem.SVGFontRegistry()
-        css_style_content = svg_font_registry.css_style() + "\n".join([ """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
-                      """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
+        print(svg_font_registry.registry)
+        css_style_content = svg_font_registry.css_style(include_fonts=['Comfortaa Regular', 'DejaVu Sans', 'DejaVu Sans Mono']) + "\n".join([ 
+            """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
+            """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
                       ])
         svg_attribute_data_grid = svgsystem.SVGDataGridLayout(attribute_data_grid,
                                          {},
@@ -256,7 +260,7 @@ class ModelEntityClass:
         svg_image = viewbox.replace("%%placeholder%%", 
                             defs_block +\
                             str(panel))
-        return svg_image
+        return svg_image, vb_bounds
         
 def include_node_function(gerf_object, identifier):
     empty_node=gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_object)
@@ -475,9 +479,10 @@ def erd_gen_style_contents_for_node(graph, node_id, gerf_data)->dict[URIRef,dict
                     {"entity" : node_id}
                     )))
                 mec = ModelEntityClass.from_entity_attribute_sheet(entity_sheet_df)
-                svg = mec.to_svg_component()
+                svg, bounds = mec.to_svg_component()
 
-                style_contents = {node_id : {"image": svg_to_urldata(svg)
+                style_contents = {node_id : {"image": svg,
+                                             "size" : max(bounds)
                             }}
             case KGDM.Relationship:
                 pass
