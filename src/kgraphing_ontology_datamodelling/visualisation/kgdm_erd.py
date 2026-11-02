@@ -1,7 +1,7 @@
 from typing import Callable, Optional, Any, Self
 import io
 import tempfile
-
+import asyncio
 
 from functools import partial
 from rdflib.namespace import RDF, RDFS, OWL
@@ -10,10 +10,14 @@ from pandas import DataFrame, Series
 from gravis import convert
 
 from svgtext import svgsystem, htmltext, render
+from svgtext.render import svg_to_png, batch_svg_to_png
 from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
 from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
 from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_sheet
+from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type
+
+
 from kgraphing.store import rdfquery
 
 def svg_to_urldata(svg : str)->str:
@@ -619,6 +623,27 @@ classify_edges_on_type = ClassificationPass(
     class_annotations=edge_styles,
     property_uri=RDF.type
 )
+
+async def calculate_images_and_return_classification_pass_for_erd(gerf):
+    entity_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, 
+                                                                              parameter_bindings={"type":KGDM.Entity}))
+    entity_list = [r['subject'] for r in entity_list]
+    subject_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.SubjectRole}))
+    object_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.ObjectRole}))
+    role_list = [r['subject'] for r in subject_role_list + object_role_list]
+    e_svg_d = {}
+    for e in entity_list + role_list:
+        e_svg_d[URIRef(e)]=erd_gen_svg_image_for_node(gerf.source_graph, URIRef(e), gerf)
+    e_png_d=await batch_svg_to_png(({k:v['image'] for k,v in e_svg_d.items()}))
+    combined_style_d={}
+    for e in entity_list + role_list:
+        combined_style_d[URIRef(e)]={
+            "image":png_bytes_to_urldata(e_png_d[URIRef(e)]),
+            "size":e_svg_d[URIRef(e)]['size'],
+            #"hover":e_svg_d[URIRef(e)]['image']
+        }
+    return combined_style_d
+
 
 ERDVisualisation = Visualisation(
     include_node_function=include_node_function,
