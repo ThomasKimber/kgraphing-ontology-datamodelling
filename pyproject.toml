@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kgraphing-ontology-datamodelling"
-version = "0.1.0"
+version = "0.0.2"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -23,6 +23,3 @@ packages = ["src/kgraphing_ontology_datamodelling"]
 
 [tool.uv.sources]
 gravis = { url = "https://github.com/raufs/gravis/archive/refs/tags/v0.1.1.tar.gz" }
-kgraphing = { url = "https://github.com/ThomasKimber/kgraph/releases/download/v0.001/kgraphing-0.0.1-py3-none-any.whl" }
-tpipe = { url = "https://github.com/ThomasKimber/tpipe/releases/download/v0.001/tpipe-0.1.0-py3-none-any.whl" }
-svgtext = { url = "https://github.com/ThomasKimber/svgtext/releases/download/v0.001/svgtext-0.1.0-py3-none-any.whl" }

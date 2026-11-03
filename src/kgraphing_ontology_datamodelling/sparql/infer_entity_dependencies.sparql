@@ -1,3 +1,5 @@
+PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+
 CONSTRUCT 
 
     {
@@ -7,14 +9,10 @@ CONSTRUCT
     WHERE
 
 {
-    ?relationship a kgdm:Relationship.
-
     ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
-        a kgdm:SubjectRole;
-            kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
+        kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
 
     ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
-        a kgdm:ObjectRole;
-            kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
+        kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
     
 }

@@ -17,9 +17,13 @@ DMPipeline = partial(kgpipeline.KGraphPipeline,
 
 def DMPostLoadInference(graph):
     """Perform inference tasks on graph"""
+    print("Calculate Dependency Links")
     dependency_links_g=dependencyQ.execute(graph, {}).graph
+    print("Calculate Key Details")
     key_inference_g=infer_key_types_q.execute(graph, {}).graph
+    print("Calculate Leaf Inference")
     leaf_inference_g=infer_leaf_entities_q.execute(graph, {}).graph
+    print("Calculate Layout Breadcrumbs")
     layout_breadcrumbs_g=layout_breadcrumbs_q.execute(graph, {}).graph
     print(f"deps{len(dependency_links_g)}")
     print(f"keys{len(key_inference_g)}")

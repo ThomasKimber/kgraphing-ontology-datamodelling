@@ -1,3 +1,5 @@
+PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+
 CONSTRUCT 
 
     {?s a ?o}
