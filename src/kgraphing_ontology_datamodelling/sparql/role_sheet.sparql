@@ -1,4 +1,5 @@
 PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
 
     SELECT DISTINCT
         

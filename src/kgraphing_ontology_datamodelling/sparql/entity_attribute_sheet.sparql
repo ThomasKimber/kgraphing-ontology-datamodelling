@@ -1,6 +1,7 @@
 PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
 
-    SELECT DISTINCT 
+    SELECT
     
             ?entity 
             ?entity_qualified_name
@@ -42,23 +43,29 @@ PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
                         OPTIONAL {?attribute kgdm:ElementSequence ?attribute_sequence.}
                         OPTIONAL {?attribute kgdm:Description ?attribute_description.}
                         OPTIONAL {?attribute kgdm:AttributeIsOptional ?optional.}
-                    }
 
-            OPTIONAL {?attribute kgdm:attributeisMemberOfDomain ?domain.
-                      ?domain a kgdm:Domain;
-                          kgnam:Name ?domain_name;
-                          kgnam:FullyQualifiedName ?domain_qualified_name.
-                      OPTIONAL {?domain rdfs:label ?domain_label.}
-                      OPTIONAL {?domain kgdm:Description ?domain_description.}
-                      }
-            
-            BIND (EXISTS {
-                        ?attribute kgdm:attributeisMemberOfKey ?k.
-                        ?k a kgdm:ForeignKey.
-                        } AS ?isFK)
-            BIND (EXISTS {
-                        ?attribute kgdm:attributeisMemberOfKey ?k.
-                        ?k a kgdm:PrimaryKey.
-                    } AS ?isPK)
 
+                        OPTIONAL {?attribute kgdm:attributeisMemberOfDomain ?domain.
+                                ?domain a kgdm:Domain;
+                                    kgnam:Name ?domain_name;
+                                    kgnam:FullyQualifiedName ?domain_qualified_name.
+                                OPTIONAL {?domain rdfs:label ?domain_label.}
+                                OPTIONAL {?domain kgdm:Description ?domain_description.}
+                                }
+
+                        OPTIONAL {
+                                    {
+                                        SELECT ?attribute
+                                            (MAX(?hasPK) AS ?isPK)
+                                            (MAX(?hasFK) AS ?isFK)
+                                        WHERE {
+                                            ?attribute kgdm:attributeisMemberOfKey ?key .
+
+                                            BIND(EXISTS { ?key a kgdm:PrimaryKey . } AS ?hasPK)
+                                            BIND(EXISTS { ?key a kgdm:ForeignKey . } AS ?hasFK)
+                                        }
+                                        GROUP BY ?attribute
+                                    }
+                                }
+            }
         }

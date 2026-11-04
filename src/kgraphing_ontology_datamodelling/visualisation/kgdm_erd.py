@@ -591,7 +591,7 @@ def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,
                 entity_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_entity_attribute_sheet.execute(
                     graph, 
                     {"entity" : node_id}
-                    )))
+                    ))).fillna("")
                 mec = ModelEntityClass.from_entity_attribute_sheet(entity_sheet_df)
                 svg, bounds = mec.to_svg_component()
 
@@ -602,7 +602,7 @@ def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,
                 role_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_role_sheet.execute(
                     graph,
                     {"role" : node_id}
-                )))
+                ))).fillna("")
                 mrc = ModelRoleClass.from_role_sheet(role_sheet_df)
                 svg, bounds = mrc.to_svg_component()
                 svg_image = {"image": svg,"size" : max(bounds)*2}

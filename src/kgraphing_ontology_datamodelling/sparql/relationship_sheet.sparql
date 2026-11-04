@@ -1,6 +1,7 @@
 PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
 
-    SELECT DISTINCT
+    SELECT
         
         ?relationship
         ?relationship_label
@@ -18,17 +19,15 @@ PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
         {
 
             ?relationship a kgdm:Relationship.
-            OPTIONAL {?relationship rdfs:label ?relationship_label.}
-            OPTIONAL {?relationship kgdm:Description ?relationship_description.}
-            
+
             ?subject_role kgdm:subjectRoleIsPartOfRelationship ?relationship; 
-                kgdm:subjectRoleIsAssociatedWithEntity ?relationship_from_entity;
-                a kgdm:SubjectRole.
+                kgdm:subjectRoleIsAssociatedWithEntity ?relationship_from_entity.
 
             ?object_role kgdm:objectRoleIsPartOfRelationship ?relationship;
-                kgdm:objectRoleIsAssociatedWithEntity ?relationship_to_entity;
-                a kgdm:ObjectRole.
+                kgdm:objectRoleIsAssociatedWithEntity ?relationship_to_entity.
 
+            OPTIONAL {?relationship rdfs:label ?relationship_label.}
+            OPTIONAL {?relationship kgdm:Description ?relationship_description.}
             OPTIONAL {?relationship_to_entity rdfs:label ?relationship_to_entity_label.}
             OPTIONAL {?relationship_from_entity rdfs:label ?relationship_from_entity_label.}
             OPTIONAL {?object_role kgdm:RoleCardinality ?object_role_cardinality.}
