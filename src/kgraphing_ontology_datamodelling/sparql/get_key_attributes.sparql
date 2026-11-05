@@ -1,0 +1,15 @@
+PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
+
+SELECT 
+
+    ?key ?attribute ?attributeName ?attributeLabel
+
+    WHERE
+
+{
+    ?attribute kgdm:attributeIsMemberOfKey ?key.
+    OPTIONAL { ?attribute kgnam:Name ?attributeName. }
+    OPTIONAL { ?attribute rdfs:label ?attributeLabel. }
+    
+}

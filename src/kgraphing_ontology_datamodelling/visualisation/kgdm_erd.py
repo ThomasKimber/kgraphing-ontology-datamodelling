@@ -15,7 +15,7 @@ from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, C
 from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
 from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_sheet
-from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type, Q_get_entity_roles
+from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type, Q_get_entity_roles, Q_get_key_attributes
 
 
 from kgraphing.store import rdfquery
@@ -287,12 +287,13 @@ class ModelEntityClass(ModelThingClass):
                             str(panel))
         return svg_image, vb_bounds
 
-class ModelRoleClass(ModelThingClass):
+class ModelKeyClass(ModelThingClass):
     def __init__(self,  name : str,
                         label : str,
                         description : str,
                         uri : URIRef,
                         qualified_name : str,
+                        attribute_list : list[ModelAttributeClass],
                         subtype : str, 
                         is_optional : bool, 
                         has_many : bool
@@ -302,6 +303,28 @@ class ModelRoleClass(ModelThingClass):
         self.description=description
         self.uri=uri
         self.qualified_name=qualified_name
+        self.attribute_list=attribute_list
+        self.subtype=subtype
+        self.is_optional=is_optional
+        self.has_many=has_many
+
+class ModelRoleClass(ModelThingClass):
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str,
+                        key : URIRef,
+                        subtype : str, 
+                        is_optional : bool, 
+                        has_many : bool
+                        ):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+        self.key=key
         self.subtype=subtype
         self.is_optional=is_optional
         self.has_many=has_many
@@ -328,6 +351,7 @@ class ModelRoleClass(ModelThingClass):
                         "description" : "blank",
                         "uri" : row.role,
                         "qualified_name" : "blank",
+                        "key" : row.role_key,
                         "subtype" : row.role_type, 
                         "is_optional" : row.role_optionality, 
                         "has_many" : row.role_cardinality 
@@ -603,7 +627,12 @@ def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,
                     graph,
                     {"role" : node_id}
                 ))).fillna("")
+
                 mrc = ModelRoleClass.from_role_sheet(role_sheet_df)
+                key_attributes=DataFrame(rdfquery.results_to_resultlist(Q_get_key_attributes.execute(
+                    graph,
+                    {"key" : node_id}
+                ))).fillna("")
                 svg, bounds = mrc.to_svg_component()
                 svg_image = {"image": svg,"size" : max(bounds)*2}
 

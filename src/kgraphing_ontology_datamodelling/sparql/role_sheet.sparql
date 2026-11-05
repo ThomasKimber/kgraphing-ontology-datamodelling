@@ -5,6 +5,7 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
         
         ?role
         ?role_type
+        ?role_key
         ?role_cardinality
         ?role_optionality
 
@@ -12,6 +13,7 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
         {
             ?role a ?role_type.
             VALUES ?role_type { kgdm:SubjectRole kgdm:ObjectRole }
+            OPTIONAL { ?role kgdm:subjectRoleIsAssociatedWithKey ?role_key.}
             OPTIONAL {?role kgdm:RoleCardinality ?role_cardinality.}
             OPTIONAL {?role kgdm:RoleOptionality ?role_optionality.}
         }

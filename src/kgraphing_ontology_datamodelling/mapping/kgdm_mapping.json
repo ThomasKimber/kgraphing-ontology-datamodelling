@@ -95,7 +95,7 @@
                 {
                     "InstanceName": "TargetEntityModel",
                     "SubjectTag": "TargetEntityModel",
-                    "ParentTag": null,
+                    "ParentTag": "ModelNamespace",
                     "Definition": false
                 }
             ]
