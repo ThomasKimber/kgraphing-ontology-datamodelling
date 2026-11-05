@@ -10,6 +10,8 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
         ?relationship_to_entity
         ?relationship_from_entity_label
         ?relationship_to_entity_label
+        ?subject_role
+        ?object_role
         ?object_role_cardinality
         ?object_role_optionality
         ?subject_role_cardinality

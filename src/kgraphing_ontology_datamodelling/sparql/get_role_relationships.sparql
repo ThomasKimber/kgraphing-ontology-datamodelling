@@ -1,0 +1,16 @@
+PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+
+SELECT
+
+    ?role ?relationship
+
+    WHERE
+{
+    {
+        ?role kgdm:objectRoleIsPartOfRelationship ?relationship.
+    }
+    UNION
+    {
+        ?role kgdm:objectRoleIsPartOfRelationship ?relationship.
+    }
+}

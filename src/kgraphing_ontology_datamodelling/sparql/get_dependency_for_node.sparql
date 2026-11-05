@@ -2,7 +2,7 @@ PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
 
 SELECT
 
-    ?dependency
+    ?dependency ?node
 
 WHERE
 

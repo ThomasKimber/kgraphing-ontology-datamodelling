@@ -1,0 +1,18 @@
+PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+
+SELECT 
+
+    ?entity ?subjectRole ?subjectRoleKey ?relationship ?objectRole ?objectRoleKey ?objectEntity
+
+    WHERE
+
+{
+    ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
+        kgdm:subjectRoleIsAssociatedWithEntity ?entity.
+    OPTIONAL { ?subjectRole kgdm:subjectRoleIsAssociatedWithKey ?subjectRoleKey.}
+
+    ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
+        kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
+    OPTIONAL { ?objectRole kgdm:objectRoleIsAssociatedWithKey ?objectRoleKey.}
+    
+}

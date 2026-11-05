@@ -81,4 +81,25 @@ Q_role_sheet = rdfquery.QueryAPI("Role Sheet",
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
+Q_get_entity_roles = rdfquery.QueryAPI("Entity Associated Roles",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('get_entity_roles.sparql').read_text(encoding="utf-8"),
+                             description="Returns all roles associated to an entity.",
+                             parameters={"entity" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
+Q_get_role_relationships = rdfquery.QueryAPI("Role Associated Relationships",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('get_role_relationships.sparql').read_text(encoding="utf-8"),
+                             description="Returns all relationships associated to a role.",
+                             parameters={"role" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
+Q_get_entity_dependency_paths = rdfquery.QueryAPI("Role Associated Relationships",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('get_entity_dependency_paths.sparql').read_text(encoding="utf-8"),
+                             description="Returns all outbound relationship paths associated with a given entity.",
+                             parameters={"entity" : URIRef},
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
+
 

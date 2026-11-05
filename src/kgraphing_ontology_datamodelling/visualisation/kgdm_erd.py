@@ -15,7 +15,7 @@ from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, C
 from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
 from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_sheet
-from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type
+from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type, Q_get_entity_roles
 
 
 from kgraphing.store import rdfquery
@@ -624,23 +624,30 @@ classify_edges_on_type = ClassificationPass(
     property_uri=RDF.type
 )
 
-async def calculate_images_and_return_classification_pass_for_erd(gerf):
-    entity_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, 
+async def calculate_images_and_return_classification_pass_for_erd(gerf, 
+                                                                  node_selection : list[URIRef]|None=None):
+    if node_selection is None:
+        entity_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, 
                                                                               parameter_bindings={"type":KGDM.Entity}))
-    entity_list = [r['subject'] for r in entity_list]
-    subject_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.SubjectRole}))
-    object_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.ObjectRole}))
-    role_list = [r['subject'] for r in subject_role_list + object_role_list]
+    else:
+        entity_list = [{'subject':n} for n in node_selection]
+    entity_list = [URIRef(r['subject']) for r in entity_list]
+#    subject_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.SubjectRole}))
+#    object_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.ObjectRole}))
+    role_list=[]
+    for e in entity_list:
+        e_roles = rdfquery.results_to_resultlist(Q_get_entity_roles.execute(gerf.source_graph, parameter_bindings={"entity" : e}))
+        role_list.extend([URIRef(r['role']) for r in e_roles])
     e_svg_d = {}
     for e in tqdm.tqdm(entity_list + role_list):
-        e_svg_d[URIRef(e)]=erd_gen_svg_image_for_node(gerf.source_graph, URIRef(e), gerf)
+        e_svg_d[e]=erd_gen_svg_image_for_node(gerf.source_graph, e, gerf)
     e_png_d=await batch_svg_to_png(({k:v['image'] for k,v in e_svg_d.items()}))
     combined_style_d={}
     for e in entity_list + role_list:
-        combined_style_d[URIRef(e)]={
-            "image":png_bytes_to_urldata(e_png_d[URIRef(e)]),
-            "size":e_svg_d[URIRef(e)]['size'],
-            "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d[URIRef(e)])}\"></img>"
+        combined_style_d[e]={
+            "image":png_bytes_to_urldata(e_png_d[e]),
+            "size":e_svg_d[e]['size'],
+            "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d[e])}\"></img>"
         }
     return combined_style_d
 
