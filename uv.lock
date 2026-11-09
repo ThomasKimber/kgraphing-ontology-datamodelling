@@ -1058,7 +1058,7 @@ wheels = [
 
 [[package]]
 name = "svgtext"
-version = "0.0.2"
+version = "0.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fonttools" },
@@ -1067,9 +1067,9 @@ dependencies = [
     { name = "pytest-playwright" },
     { name = "tpipe" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/df/33/39d62f7eb82d487e17d5f3df221564134065d76b17f55ae677fbc734d754/svgtext-0.0.2.tar.gz", hash = "sha256:b90526259ce163a80d276e8aa63c3504ae25a7c7bf2dd97fc96938ae18cb15c3", size = 5665064, upload-time = "2026-11-03T13:00:21.552Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/86/15/706b5eb6965eebb67804a492d30638100839956d3674175fa0c0be7361d6/svgtext-0.0.3.tar.gz", hash = "sha256:d5ac38f7cfecb8143a7f16b7d06fc5dd076bc5367a393062b96f231f390889b5", size = 5664924, upload-time = "2026-11-09T09:58:11.466Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1a/03/6d7d47b7678c5844423561b6a43a76aa531074039097044c7335e245c9c8/svgtext-0.0.2-py3-none-any.whl", hash = "sha256:cbf97b3b249d0839590f6917f17a32dec79e06cef0d6a284a7dbca4a75f50d4e", size = 5589157, upload-time = "2026-11-03T13:00:29.557Z" },
+    { url = "https://files.pythonhosted.org/packages/8d/05/4f70192b3f799c8628ab958191779214222cc165f1ff0bba30e586db74a1/svgtext-0.0.3-py3-none-any.whl", hash = "sha256:74ad2e20e63a035c141e3d7c3dd427336e0461c498d490efef4a552a5f195f44", size = 5588735, upload-time = "2026-11-09T09:58:06.669Z" },
 ]
 
 [[package]]

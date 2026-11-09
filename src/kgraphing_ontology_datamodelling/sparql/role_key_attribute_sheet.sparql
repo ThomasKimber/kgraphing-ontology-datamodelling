@@ -1,0 +1,68 @@
+PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
+PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
+
+    SELECT
+        
+        ?role
+        ?role_name
+        ?role_qualified_name
+        ?role_description
+        ?role_label
+        ?role_type
+        ?role_key
+        ?role_key_name
+        ?role_key_qualified_name
+        ?role_key_description
+        ?role_key_label
+        ?role_key_type
+        ?role_cardinality
+        ?role_optionality
+        ?attribute 
+        ?attribute_name 
+        ?attribute_qualified_name 
+        ?attribute_label
+        ?attribute_description
+        ?attribute_sequence
+        ?domain
+        ?domain_name
+        ?domain_qualified_name
+        ?domain_label
+        ?domain_description
+
+    WHERE
+
+        {
+            VALUES ?role_type { kgdm:SubjectRole kgdm:ObjectRole }
+            ?role a ?role_type;
+                kgnam:FullyQualifiedName ?role_qualified_name;
+                kgnam:Name ?role_name.
+            OPTIONAL { ?role rdfs:label ?role_label. }
+            OPTIONAL { ?role kgdm:Description ?role_description. }
+            OPTIONAL {
+                VALUES ?role_association { kgdm:subjectRoleIsAssociatedWithKey kgdm:objectRoleIsAssociatedWithKey }
+                ?role ?role_association ?role_key. 
+                OPTIONAL {?role_key kgnam:FullyQualifiedName ?role_key_qualified_name;
+                          kgnam:Name ?role_key_name.}
+                OPTIONAL { ?role_key kgdm:KeyType ?role_key_type. }
+                OPTIONAL { ?role_key rdfs:label ?role_key_label. }
+                OPTIONAL { ?role_key kgdm:Description ?role_key_description. }
+                OPTIONAL { ?role kgdm:RoleCardinality ?role_cardinality. }
+                OPTIONAL { ?role kgdm:RoleOptionality ?role_optionality. }
+                OPTIONAL { ?attribute kgdm:attributeisMemberOfKey ?role_key. 
+                           ?attribute a kgdm:Attribute.
+                OPTIONAL { ?attribute kgnam:Name ?attribute_name. }
+                OPTIONAL { ?attribute kgnam:FullyQualifiedName ?attribute_qualified_name. }
+                OPTIONAL { ?attribute rdfs:label ?attribute_label. }
+                OPTIONAL { ?attribute kgdm:Description ?attribute_description. }
+                OPTIONAL {?attribute kgdm:ElementSequence ?attribute_sequence.}
+                OPTIONAL {?attribute kgdm:attributeisMemberOfDomain ?domain.
+                                ?domain a kgdm:Domain;
+                                    kgnam:Name ?domain_name;
+                                    kgnam:FullyQualifiedName ?domain_qualified_name.
+                                OPTIONAL {?domain rdfs:label ?domain_label.}
+                                OPTIONAL {?domain kgdm:Description ?domain_description.}
+                                }
+                     }
+            }
+
+        }

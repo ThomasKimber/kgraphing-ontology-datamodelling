@@ -14,8 +14,9 @@ from svgtext.render import svg_to_png, batch_svg_to_png
 from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
 from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
-from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_sheet
+from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_key_attribute_sheet
 from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type, Q_get_entity_roles, Q_get_key_attributes
+from kgraphing_ontology_datamodelling.queries import Q_key_attribute_sheet
 
 
 from kgraphing.store import rdfquery
@@ -171,10 +172,32 @@ class ModelAttributeClass(ModelThingClass):
         })
 
     @classmethod
+    def from_role_key_attribute_row(cls, row : Series)-> Self:
+        
+        return cls(**{"name" : row.attribute_name,
+                      "label" : row.attribute_label,
+                      "description" : None,
+                      "uri" : row.attribute,
+                      "qualified_name" : None,
+                      "domain" : ModelDomainClass.from_entity_attribute_row(row),
+                      "sequence" : None,
+                      "optional" : None,
+                      "isPK" : None,
+                      "isFK" : None
+        })
+
+    @classmethod
     def attribute_list_from_entity_attribute_sheet(cls, df : DataFrame)-> list[Self]:
         a_list=[]
         for i,row in df.iterrows():
             a_list.append(cls.from_entity_attribute_row(row))
+        return a_list
+
+    @classmethod
+    def attribute_list_from_role_key_attribute_sheet(cls, df : DataFrame)-> list[Self]:
+        a_list=[]
+        for i,row in df.iterrows():
+            a_list.append(cls.from_role_key_attribute_row(row))
         return a_list
 
 class ModelEntityClass(ModelThingClass):
@@ -295,8 +318,6 @@ class ModelKeyClass(ModelThingClass):
                         qualified_name : str,
                         attribute_list : list[ModelAttributeClass],
                         subtype : str, 
-                        is_optional : bool, 
-                        has_many : bool
                         ):
         self.name=name
         self.label=label
@@ -305,16 +326,59 @@ class ModelKeyClass(ModelThingClass):
         self.qualified_name=qualified_name
         self.attribute_list=attribute_list
         self.subtype=subtype
-        self.is_optional=is_optional
-        self.has_many=has_many
 
+    def attribute_list_to_dataframe(self) -> DataFrame:
+        frame_contents=[]
+        key_glyph_map = {
+            True : "Yes",
+            False : ""
+        }
+        for a in sorted(self.attribute_list, key=lambda x : x.sequence):
+            frame_contents.append({"Attribute" : a.name, "Type" : a.domain.name, "Optional" : a.optional, "PK" : key_glyph_map.get(a.isPK,a.isPK), "FK" : key_glyph_map.get(a.isFK,"")})
+        return DataFrame(frame_contents)
+    
+    @classmethod
+    def from_role_key_sheet(cls, df : DataFrame)-> Self:
+        row = df.iloc[0]
+        return cls(**{  "name" : row.role_key_name,
+                        "label" : row.role_key_label,
+                        "description" : row.role_key_description,
+                        "uri" : row.role_key,
+                        "qualified_name" : row.role_key_qualified_name,
+                        "attribute_list" : ModelAttributeClass.attribute_list_from_role_key_attribute_sheet(df),
+                        "subtype" : row.role_key_type
+        })
+
+    def to_svg_component(self):
+        svg_font_registry = svgsystem.SVGFontRegistry()
+        markup=htmltext.html_to_markup(f"<h1><b>{self.name}</b></h1>" + "".join([f"<p>{a.name} : {a.domain.name}</p>" for a in self.attribute_list]), 65)
+        att_textspans=svgsystem.SVGMultiSpanText(span_markup=markup, linespace=1, font=svg_font_registry.registry['DejaVu Sans'], fontsize=12)
+        shape=svgsystem.SVGCircleWithSpokes(10,0,0,6,7,fill="none", stroke="black", stroke_width=2)
+
+        composite = svgsystem.SVGHorizontalComposite(contents=[shape, att_textspans], padding=5.0)
+
+        v_bounds = composite.bounds[0]-3,composite.bounds[1]-2,composite.bounds[2]+5, composite.bounds[3]+3
+        vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
+
+        viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
+
+        style_content = svg_font_registry.css_style() + "\n".join([ """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
+                            """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
+                            ])
+        defs_block = f"""<defs>{"".join([])}<style type="text/css">{style_content}</style></defs>"""
+        svg_image = viewbox.replace("%%placeholder%%", 
+                            defs_block +\
+                            str(composite) 
+                            )
+        return svg_image,vb_bounds
+    
 class ModelRoleClass(ModelThingClass):
     def __init__(self,  name : str,
                         label : str,
                         description : str,
                         uri : URIRef,
                         qualified_name : str,
-                        key : URIRef,
+                        key : ModelKeyClass,
                         subtype : str, 
                         is_optional : bool, 
                         has_many : bool
@@ -342,20 +406,19 @@ class ModelRoleClass(ModelThingClass):
             else:
                 self.has_many=False
 
-
     @classmethod
-    def from_role_sheet(cls, df : DataFrame)-> Self:
+    def from_role_key_sheet(cls, df : DataFrame)-> Self:
+        key = ModelKeyClass.from_role_key_sheet(df)
         row = df.iloc[0]
-        return cls(**{  "name" : "blank",
-                        "label" : "blank",
-                        "description" : "blank",
+        return cls(**{  "name" : row.role_name,
+                        "label" : row.role_label,
+                        "description" : row.role_description,
                         "uri" : row.role,
-                        "qualified_name" : "blank",
-                        "key" : row.role_key,
+                        "qualified_name" : row.role_qualified_name,
+                        "key" : key,
                         "subtype" : row.role_type, 
                         "is_optional" : row.role_optionality, 
                         "has_many" : row.role_cardinality 
-                        
         })
 
     def to_svg_component(self):
@@ -387,7 +450,6 @@ class ModelRoleClass(ModelThingClass):
                             defs_block +\
                             str(shape))
         return svg_image, vb_bounds
-
 
 def include_node_function(gerf_object, identifier):
     empty_node=gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_object)
@@ -601,7 +663,10 @@ def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,
     key_set = {frozenset({KGDM.Entity}) : KGDM.Entity, 
                frozenset({KGDM.SubjectRole}) : KGDM.SubjectRole, 
                frozenset({KGDM.ObjectRole}) : KGDM.ObjectRole, 
-               frozenset({KGDM.Relationship}) : KGDM.Relationship}
+               frozenset({KGDM.Relationship}) : KGDM.Relationship,
+               frozenset({KGDM.PrimaryKey}) : KGDM.PrimaryKey,
+               frozenset({KGDM.ForeignKey}) : KGDM.ForeignKey
+               }
     candidate_keys = {e:k for e,k in enumerate(key_set)}
     matching_keys = {k:v for k,v in setfunctions.venn_partitions({**{"Q" : node_type}, **{e:set(k) for e,k in candidate_keys.items()}}, 
                                          notation_style="binindex").items() if 'Q' in k}
@@ -623,18 +688,24 @@ def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,
             case KGDM.Relationship:
                 pass
             case KGDM.SubjectRole | KGDM.ObjectRole:
-                role_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_role_sheet.execute(
+                role_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_role_key_attribute_sheet.execute(
                     graph,
-                    {"role" : node_id}
-                ))).fillna("")
+                    {"role" : node_id}))).fillna("")
 
-                mrc = ModelRoleClass.from_role_sheet(role_sheet_df)
-                key_attributes=DataFrame(rdfquery.results_to_resultlist(Q_get_key_attributes.execute(
-                    graph,
-                    {"key" : node_id}
-                ))).fillna("")
+                mrc = ModelRoleClass.from_role_key_sheet(role_sheet_df)
+
                 svg, bounds = mrc.to_svg_component()
-                svg_image = {"image": svg,"size" : max(bounds)*2}
+                svg_image = {"image": svg, "size" : max(bounds)*2}
+            case KGDM.PrimaryKey | KGDM.ForeignKey:
+                key_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_key_attribute_sheet.execute(
+                graph,
+                {"role_key" : node_id}))).fillna("")
+
+                mkc = ModelKeyClass.from_role_key_sheet(key_sheet_df)
+
+                svg, bounds = mkc.to_svg_component()
+                svg_image = {"image": svg, "size" : max(bounds)*2}
+                
 
     else:
         print(f"It was a {key_set[candidate_keys[best_keys[0][0]]]}")
@@ -660,24 +731,38 @@ async def calculate_images_and_return_classification_pass_for_erd(gerf,
                                                                               parameter_bindings={"type":KGDM.Entity}))
     else:
         entity_list = [{'subject':n} for n in node_selection]
-    entity_list = [URIRef(r['subject']) for r in entity_list]
-#    subject_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.SubjectRole}))
-#    object_role_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, parameter_bindings={"type":KGDM.ObjectRole}))
-    role_list=[]
+    entity_list = set([URIRef(r['subject']) for r in entity_list])
+    role_list=set()
+    key_list=set()
+    role_keys={}
+
     for e in entity_list:
         e_roles = rdfquery.results_to_resultlist(Q_get_entity_roles.execute(gerf.source_graph, parameter_bindings={"entity" : e}))
-        role_list.extend([URIRef(r['role']) for r in e_roles])
+        role_list=role_list.union(set([URIRef(r['role']) for r in e_roles]))
+        
+        key_list=key_list.union(set([URIRef(r['role_key']) for r in e_roles if r['role_key'] is not None]))
+        role_keys={**role_keys, **{URIRef(r['role']) : URIRef(r['role_key']) for r in e_roles if r['role_key'] is not None}}
+
     e_svg_d = {}
-    for e in tqdm.tqdm(entity_list + role_list):
+    for e in tqdm.tqdm(entity_list.union(role_list).union(key_list)):
         e_svg_d[e]=erd_gen_svg_image_for_node(gerf.source_graph, e, gerf)
     e_png_d=await batch_svg_to_png(({k:v['image'] for k,v in e_svg_d.items()}))
+
     combined_style_d={}
-    for e in entity_list + role_list:
-        combined_style_d[e]={
-            "image":png_bytes_to_urldata(e_png_d[e]),
-            "size":e_svg_d[e]['size'],
-            "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d[e])}\"></img>"
-        }
+    for e in entity_list.union(role_list).union(key_list):
+        if e in role_list:
+
+            combined_style_d[e]={
+                "image":png_bytes_to_urldata(e_png_d[e]),
+                "size":e_svg_d[e]['size'],
+                "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d.get(role_keys.get(e,e)))}\"></img>"
+            }
+        else:
+            combined_style_d[e]={
+                "image":png_bytes_to_urldata(e_png_d[e]),
+                "size":e_svg_d[e]['size'],
+                "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d[e])}\"></img>"
+            }
     return combined_style_d
 
 

@@ -2,15 +2,21 @@ PREFIX kgdm: <https://kgraph.foo/onto/datamodelling#>
 
 SELECT
 
-    ?entity ?role
+    ?entity ?role ?role_key
 
     WHERE
 {
     {
         ?role kgdm:subjectRoleIsAssociatedWithEntity ?entity.
+        OPTIONAL {
+                VALUES ?role_association { kgdm:subjectRoleIsAssociatedWithKey kgdm:objectRoleIsAssociatedWithKey }
+                ?role ?role_association ?role_key. }
     }
     UNION
     {
         ?role kgdm:objectRoleIsAssociatedWithEntity ?entity.
+        OPTIONAL {
+                VALUES ?role_association { kgdm:subjectRoleIsAssociatedWithKey kgdm:objectRoleIsAssociatedWithKey }
+                ?role ?role_association ?role_key. }
     }
 }
