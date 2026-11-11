@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "kgraphing-ontology-datamodelling"
-version = "0.0.3"
-description = "Add your description here"
+version = "0.0.4"
+description = "This project covers templates, mappings and materials used to collate a coherent data architecture picture covering vocabulary definitions, conceptual data models, logical and physical models and inter-classification mappings. Other capabilities might include data harvesting patterns to help manage, ingest and decompose complex and heterogenic data sources. "
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
