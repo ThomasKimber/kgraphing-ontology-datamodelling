@@ -65,6 +65,8 @@ Q_entity_attribute_sheet = rdfquery.QueryAPI("Entity and Attribute Sheet",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('entity_attribute_sheet.sparql').read_text(encoding="utf-8"),
                              description="Report showing entities and their attributes with PK/FK flags.",
                              parameters={"entity" : URIRef},
+                             batch_parameter="entity",
+                             batch_size=250,
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
@@ -72,6 +74,8 @@ Q_relationship_sheet = rdfquery.QueryAPI("Relationship Sheet",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('relationship_sheet.sparql').read_text(encoding="utf-8"),
                              description="Report showing relationships with associated flags and properties.",
                              parameters={"relationship" : URIRef},
+                             batch_parameter="relationship",
+                             batch_size=250,
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
@@ -79,12 +83,17 @@ Q_role_key_attribute_sheet = rdfquery.QueryAPI("Role Key Attribute Sheet",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('role_key_attribute_sheet.sparql').read_text(encoding="utf-8"),
                              description="Report showing roles with associated flags and properties, keys and their associated attributes.",
                              parameters={"role" : URIRef},
+                             batch_parameter="role",
+                             batch_size=250,
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
 Q_key_attribute_sheet = rdfquery.QueryAPI("Key Attribute Sheet",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('key_attribute_sheet.sparql').read_text(encoding="utf-8"),
                              description="Report showing keys and their associated attributes - aligned to be a close mirror of the role_key_attrbiute_sheet.",
                              parameters={"role_key" : URIRef},
+                             batch_parameter="role_key",
+                             batch_size=250,
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
@@ -106,6 +115,8 @@ Q_get_entity_dependency_paths = rdfquery.QueryAPI("Role Associated Relationships
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('get_entity_dependency_paths.sparql').read_text(encoding="utf-8"),
                              description="Returns all outbound relationship paths associated with a given entity.",
                              parameters={"subjectEntity" : URIRef},
+                             batch_parameter="subjectEntity",
+                             batch_size=250,
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 

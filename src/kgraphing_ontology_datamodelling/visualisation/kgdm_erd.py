@@ -5,41 +5,28 @@ import asyncio
 
 from functools import partial
 from rdflib.namespace import RDF, RDFS, OWL
-from rdflib import URIRef, BNode, Literal, Namespace
+from rdflib import URIRef, BNode, Literal, Namespace, Graph
 from pandas import DataFrame, Series
 import tqdm
 
-from svgtext import svgsystem, htmltext, render
-from svgtext.render import svg_to_png, batch_svg_to_png
+from svgtext import svgsystem, htmltext
+from svgtext.render import BatchThreadProcessor, svg_to_png_data_uri_cached
 from kgraphing_ontology_datamodelling.visualisation.core import Visualisation, ClassificationPass
 from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
 from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_key_attribute_sheet
 from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type, Q_get_entity_roles, Q_get_key_attributes
-from kgraphing_ontology_datamodelling.queries import Q_key_attribute_sheet
+from kgraphing_ontology_datamodelling.queries import Q_key_attribute_sheet, Q_get_entity_dependency_paths
 
 
 from kgraphing.store import rdfquery
 
-def svg_to_urldata(svg : str)->str:
-    #with tempfile.NamedTemporaryFile(mode='w', suffix='.svg', delete=False) as tmp:
-    #    tmp.write(svg)
-    #    virtual_filename = tmp.name  # This is the string path you pass to the API
-    #    image_data = convert.image_to_data_url(virtual_filename, 'svg', return_data_format=False)
-    #    return image_data
-    base64text=render.base64_text_to_data_url(svg,data_format="svg")
-    return render.base64_text_to_data_url(base64text, "png")
+SVGFONTREGISTRY = svgsystem.SVGFontRegistry()
+SVGFONTCOMFORTAA = SVGFONTREGISTRY.registry['Comfortaa Regular']
+SVGFONTDEJAVUSANS = SVGFONTREGISTRY.registry['Comfortaa Regular']
+SVGFONTDEJAVUSANS_MONO = SVGFONTREGISTRY.registry['DejaVu Sans Mono']
 
-def png_bytes_to_urldata(img : bytes)->str:
-    #with tempfile.NamedTemporaryFile(mode='wb', suffix='.png', delete=False) as tmp:
-    #    tmp.write(img)
-    #    virtual_filename = tmp.name  # This is the string path you pass to the API
-    #    image_data = convert.image_to_data_url(virtual_filename, 'png', return_data_format=False)
-    #    tmp.flush()
-    #    return image_data
-    base64text=render.binary_data_to_base64_text(img)
-    return render.base64_text_to_data_url(base64text, "png")
-
+SVGFONTCSS = SVGFONTREGISTRY.css_style(include_fonts=['Comfortaa Regular', 'DejaVu Sans', 'DejaVu Sans Mono'])
 
 def svg_optional_single_key_function():
     return svgsystem.SVGCircleWithSpokes(r=10,
@@ -105,6 +92,59 @@ class ModelThingClass:
         self.description=description
         self.uri=uri
         self.qualified_name=qualified_name
+
+
+class ModelRelationshipClass(ModelThingClass):
+    def __init__(self,  name : str,
+                        label : str,
+                        description : str,
+                        uri : URIRef,
+                        qualified_name : str,
+                        from_entity_uri : URIRef, 
+                        to_entity_uri : URIRef, 
+                        from_entity_label : str, 
+                        to_entity_label : str, 
+                        subject_role_uri : URIRef, 
+                        object_role_uri : URIRef,
+                        object_role_cardinality : int, 
+                        object_role_optionality : str,
+                        subject_role_cardinality : int, 
+                        subject_role_optionality : str
+                        ):
+        self.name=name
+        self.label=label
+        self.description=description
+        self.uri=uri
+        self.qualified_name=qualified_name
+        self.from_entity_uri = from_entity_uri
+        self.to_entity_uri = to_entity_uri 
+        self.from_entity_label = from_entity_label
+        self.to_entity_label = to_entity_label
+        self.subject_role_uri = subject_role_uri
+        self.object_role_uri = object_role_uri
+        self.object_role_cardinality = object_role_cardinality
+        self.object_role_optionality = object_role_optionality
+        self.subject_role_cardinality = subject_role_cardinality
+        self.subject_role_optionality =subject_role_optionality
+
+    @classmethod
+    def from_relationship_sheet_row(cls, row : Series)-> Self:
+        return cls(**{"name" : row.relationship_name, 
+                      "label" : row.relationship_label, 
+                      "description" : row.relationship_description, 
+                      "uri" : URIRef(row.relationship), 
+                      "qualified_name" : row.relationship_qualified_name,
+                      "from_entity_uri" : URIRef(row.relationship_from_entity), 
+                        "to_entity_uri" : URIRef(row.relationship_to_entity),
+                        "from_entity_label" : row.relationship_from_entity_label, 
+                        "to_entity_label" : row.relationship_to_entity_label, 
+                        "subject_role_uri" : URIRef(row.subject_role), 
+                        "object_role_uri" : URIRef(row.object_role),
+                        "object_role_cardinality" : row.object_role_cardinality, 
+                        "object_role_optionality" : row.object_role_optionality,
+                        "subject_role_cardinality" : row.subject_role_cardinality, 
+                        "subject_role_optionality" : row.subject_role_optionality
+        })
 
 class ModelDomainClass(ModelThingClass):
     def __init__(self,  name : str,
@@ -250,16 +290,16 @@ class ModelEntityClass(ModelThingClass):
         
         svg_font_registry = svgsystem.SVGFontRegistry()
 
-        css_style_content = svg_font_registry.css_style(include_fonts=['Comfortaa Regular', 'DejaVu Sans', 'DejaVu Sans Mono']) + "\n".join([ 
+        css_style_content = SVGFONTCSS + "\n".join([ 
             """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
             """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
                       ])
         svg_attribute_data_grid = svgsystem.SVGDataGridLayout(attribute_data_grid,
                                          {},
                                          True,
-                                         svg_font_registry.registry['Comfortaa Regular'], 
+                                         SVGFONTCOMFORTAA, 
                                          12,
-                                         svg_font_registry.registry['DejaVu Sans Mono'],
+                                         SVGFONTDEJAVUSANS_MONO,
                                          10,
                                          (1,10))
         
@@ -267,7 +307,7 @@ class ModelEntityClass(ModelThingClass):
 
         entity_description_text = svgsystem.SVGMultiSpanText(entity_description_markup, 
                                                 1.0, 
-                                                svg_font_registry.registry['DejaVu Sans'],
+                                                SVGFONTDEJAVUSANS,
                                                 12) 
         
         panel_content = svgsystem.SVGVerticalComposite(contents=[entity_description_text,svg_attribute_data_grid],
@@ -288,7 +328,7 @@ class ModelEntityClass(ModelThingClass):
         panel = svgsystem.SVGTitledPanelFromContent(
             identifier=self.qualified_name,
             title_text=f"<b>{self.name}</b>",
-            title_font=svg_font_registry.registry['Comfortaa Regular'], 
+            title_font=SVGFONTCOMFORTAA, 
             title_font_size=12,
             title_margins=(10,5,5,5),
             content_element=panel_content, 
@@ -350,25 +390,22 @@ class ModelKeyClass(ModelThingClass):
         })
 
     def to_svg_component(self):
-        svg_font_registry = svgsystem.SVGFontRegistry()
+        
         markup=htmltext.html_to_markup(f"<h1><b>{self.name}</b></h1>" + "".join([f"<p>{a.name} : {a.domain.name}</p>" for a in self.attribute_list]), 65)
-        att_textspans=svgsystem.SVGMultiSpanText(span_markup=markup, linespace=1, font=svg_font_registry.registry['DejaVu Sans'], fontsize=12)
-        shape=svgsystem.SVGCircleWithSpokes(10,0,0,6,7,fill="none", stroke="black", stroke_width=2)
+        att_textspans=svgsystem.SVGMultiSpanText(span_markup=markup, linespace=1, font=SVGFONTDEJAVUSANS, fontsize=12)
 
-        composite = svgsystem.SVGHorizontalComposite(contents=[shape, att_textspans], padding=5.0)
-
-        v_bounds = composite.bounds[0]-3,composite.bounds[1]-2,composite.bounds[2]+5, composite.bounds[3]+3
+        v_bounds = att_textspans.bounds[0]-3,att_textspans.bounds[1]-2,att_textspans.bounds[2]+5, att_textspans.bounds[3]+3
         vb_bounds = v_bounds[2]-v_bounds[0], v_bounds[3]-v_bounds[1], 
 
         viewbox=str(svgsystem.SVGViewBox(*v_bounds,*[b*2 for b in vb_bounds]))
 
-        style_content = svg_font_registry.css_style() + "\n".join([ """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
+        style_content = SVGFONTCSS + "\n".join([ """.layout_rect{\n stroke-width:1;\n stroke:red;\n fill:none;}\n""",
                             """.layout_line{\n stroke-width:0.5;\n stroke:lightblue;\n fill:none;}\n"""     
                             ])
         defs_block = f"""<defs>{"".join([])}<style type="text/css">{style_content}</style></defs>"""
         svg_image = viewbox.replace("%%placeholder%%", 
                             defs_block +\
-                            str(composite) 
+                            str(att_textspans) 
                             )
         return svg_image,vb_bounds
     
@@ -571,10 +608,10 @@ edge_styles = {
         "label_color": "black",
         "label_size": 10.0    },
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#layoutBreadcrumb')}) : {
-        "color" : "grey",
+        "color" : "white",
         "opacity" : 1.0,
         "size": 3.0,
-        "arrow_color": "black",
+        "arrow_color": "white",
         "arrow_size": 10.0,
         "label_color": "black",
         "label_size": 10.0    },
@@ -584,7 +621,7 @@ vis_graph_settings = {
     "node_label_data_source" : "label", 
     "node_size_data_source" : "size", 
     "node_label_size_factor" : 2.5, 
-    "node_size_factor" : 3.0, 
+    "node_size_factor" : 1.0, 
     "edge_size_data_source" : "size", 
     "edge_label_data_source" : "label", 
     "edge_size_factor" : 2.5, 
@@ -657,61 +694,6 @@ def classify_edge_entity_by_gerf_property(id, data, gerf_data, property_uri, key
 def classify_node_by_identity(id, data, gerf_data, property_uri, key_set):
     return id
 
-def erd_gen_svg_image_for_node(graph, node_id, gerf_data)->dict[URIRef,dict[str,Any]]:
-    empty_node = gerf.ObservedEntity(identifier=None, order=None, gerf_object=gerf_data)
-    node_type = gerf_data.entities.get(node_id, empty_node).interactions.get(RDF.type,set())
-    key_set = {frozenset({KGDM.Entity}) : KGDM.Entity, 
-               frozenset({KGDM.SubjectRole}) : KGDM.SubjectRole, 
-               frozenset({KGDM.ObjectRole}) : KGDM.ObjectRole, 
-               frozenset({KGDM.Relationship}) : KGDM.Relationship,
-               frozenset({KGDM.PrimaryKey}) : KGDM.PrimaryKey,
-               frozenset({KGDM.ForeignKey}) : KGDM.ForeignKey
-               }
-    candidate_keys = {e:k for e,k in enumerate(key_set)}
-    matching_keys = {k:v for k,v in setfunctions.venn_partitions({**{"Q" : node_type}, **{e:set(k) for e,k in candidate_keys.items()}}, 
-                                         notation_style="binindex").items() if 'Q' in k}
-    
-    matching_candidates = {k:v for k,v in candidate_keys.items() if k in { m for y in matching_keys for m in y}}
-    best_keys = sorted([(k, setfunctions.lir_stats(node_type, val)) for k,val in matching_candidates.items()], key=lambda x : x[1][2], reverse=True)
-    svg_image={}
-    if len(best_keys)>0:
-        match key_set[candidate_keys[best_keys[0][0]]]:
-            case KGDM.Entity:
-                entity_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_entity_attribute_sheet.execute(
-                    graph, 
-                    {"entity" : node_id}
-                    ))).fillna("")
-                mec = ModelEntityClass.from_entity_attribute_sheet(entity_sheet_df)
-                svg, bounds = mec.to_svg_component()
-
-                svg_image = {"image": svg,"size" : 100}
-            case KGDM.Relationship:
-                pass
-            case KGDM.SubjectRole | KGDM.ObjectRole:
-                role_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_role_key_attribute_sheet.execute(
-                    graph,
-                    {"role" : node_id}))).fillna("")
-
-                mrc = ModelRoleClass.from_role_key_sheet(role_sheet_df)
-
-                svg, bounds = mrc.to_svg_component()
-                svg_image = {"image": svg, "size" : max(bounds)*2}
-            case KGDM.PrimaryKey | KGDM.ForeignKey:
-                key_sheet_df=DataFrame(rdfquery.results_to_resultlist(Q_key_attribute_sheet.execute(
-                graph,
-                {"role_key" : node_id}))).fillna("")
-
-                mkc = ModelKeyClass.from_role_key_sheet(key_sheet_df)
-
-                svg, bounds = mkc.to_svg_component()
-                svg_image = {"image": svg, "size" : max(bounds)*2}
-                
-
-    else:
-        print(f"It was a {key_set[candidate_keys[best_keys[0][0]]]}")
-    
-    return svg_image
-
 classify_nodes_on_type = ClassificationPass(
     classification_function=classify_node_by_gerf_property,
     class_annotations=styles_by_type,
@@ -724,47 +706,161 @@ classify_edges_on_type = ClassificationPass(
     property_uri=RDF.type
 )
 
-async def calculate_images_and_return_classification_pass_for_erd(gerf, 
-                                                                  node_selection : list[URIRef]|None=None):
-    if node_selection is None:
-        entity_list = rdfquery.results_to_resultlist(Q_get_object_by_type.execute(gerf.source_graph, 
-                                                                              parameter_bindings={"type":KGDM.Entity}))
-    else:
-        entity_list = [{'subject':n} for n in node_selection]
-    entity_list = set([URIRef(r['subject']) for r in entity_list])
-    role_list=set()
-    key_list=set()
-    role_keys={}
+def populate_style_dict(index_object_tuple):
+    index, input_object = index_object_tuple
+    object_type = type(input_object)
+    output_style_dict=dict()
 
-    for e in entity_list:
-        e_roles = rdfquery.results_to_resultlist(Q_get_entity_roles.execute(gerf.source_graph, parameter_bindings={"entity" : e}))
-        role_list=role_list.union(set([URIRef(r['role']) for r in e_roles]))
+    match input_object:
         
-        key_list=key_list.union(set([URIRef(r['role_key']) for r in e_roles if r['role_key'] is not None]))
-        role_keys={**role_keys, **{URIRef(r['role']) : URIRef(r['role_key']) for r in e_roles if r['role_key'] is not None}}
+        case ModelEntityClass():
+            svg_component, svg_component_size = input_object.to_svg_component()
+            png_component = svg_to_png_data_uri_cached(svg_component)
 
-    e_svg_d = {}
-    for e in tqdm.tqdm(entity_list.union(role_list).union(key_list)):
-        e_svg_d[e]=erd_gen_svg_image_for_node(gerf.source_graph, e, gerf)
-    e_png_d=await batch_svg_to_png(({k:v['image'] for k,v in e_svg_d.items()}))
-
-    combined_style_d={}
-    for e in entity_list.union(role_list).union(key_list):
-        if e in role_list:
-
-            combined_style_d[e]={
-                "image":png_bytes_to_urldata(e_png_d[e]),
-                "size":e_svg_d[e]['size'],
-                "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d.get(role_keys.get(e,e)))}\"></img>"
+            output_style_dict[index]={
+                "image":png_component,
+                "size": float(max(svg_component_size)),
+                "hover" : f"<img src=\"{png_component}\" width=\"100%\"></img>"
             }
-        else:
-            combined_style_d[e]={
-                "image":png_bytes_to_urldata(e_png_d[e]),
-                "size":e_svg_d[e]['size'],
-                "hover":f"<img src=\"{png_bytes_to_urldata(e_png_d[e])}\"></img>"
+            
+        case ModelRoleClass():
+            svg_component, svg_component_size = input_object.to_svg_component()
+            png_component = svg_to_png_data_uri_cached(svg_component)
+            hover_component, hover_component_size = input_object.key.to_svg_component()
+            output_style_dict[index]={
+                "image":png_component,
+                "size": float(max(svg_component_size)*5),
+                "hover" : f"<img src=\"{svg_to_png_data_uri_cached(hover_component)}\" width=\"100%\"></img>"
             }
-    return combined_style_d
 
+        case ModelRelationshipClass():
+            output_style_dict[index]={
+            }
+        
+    return output_style_dict
+    
+model_processor = BatchThreadProcessor(
+    function=populate_style_dict,
+    batch_size=50,
+    pool_size=8,
+)
+
+def process_entity_sheet(entity_sheet):
+    
+    entity_index = dict()
+    attribute_index = dict()
+    domain_index = dict()
+    # 1st pass, collate indices for content processing
+    for i,e in enumerate(entity_sheet):
+        entity = e.get('entity')
+        attribute = e.get('attribute')
+        domain = e.get('domain')
+        if entity :
+            if entity in entity_index:
+                entity_index[entity].add(i)
+            else:
+                entity_index[entity]=set([i])
+        if attribute:
+            if attribute in attribute_index:
+                attribute_index[attribute].add(i)
+            else:
+                attribute_index[attribute]=set([i])
+        if domain:
+            if domain in domain_index:
+                domain_index[domain].add(i)
+            else:
+                domain_index[domain]=set([i])
+    entities = dict()
+
+    for e,ix in entity_index.items():
+        entities[URIRef(e)] = ModelEntityClass.from_entity_attribute_sheet(DataFrame(list(map(entity_sheet.__getitem__, ix))))
+    return entities
+
+def process_relationship_sheet(relationship_sheet):
+    relationships=dict()
+    for r in relationship_sheet:
+        relationships[URIRef(Series(r).relationship)] = ModelRelationshipClass.from_relationship_sheet_row(Series(r))
+    return relationships
+
+def process_role_key_sheet(role_key_sheet):
+    roles=dict()
+    role_index=dict()
+    for i,e in enumerate(role_key_sheet):
+        role = e.get('role')
+        key = e.get('key')
+        attribute=e.get('attribute')
+        if role :
+            if role in role_index:
+                role_index[role].add(i)
+            else:
+                role_index[role]=set([i])
+    for r, ix, in role_index.items():
+        roles[URIRef(r)]=ModelRoleClass.from_role_key_sheet(DataFrame(list(map(role_key_sheet.__getitem__, ix))))
+    return roles
+
+def process_key_sheet(key_sheet):
+    keys=dict()
+    key_index=dict()
+    for i,e in enumerate(key_sheet):
+        key = e.get('role_key')
+        attribute=e.get('attribute')
+        if key :
+            if key in key_index:
+                key_index[key].add(i)
+            else:
+                key_index[key]=set([i])
+    for k, ix, in key_index.items():
+        keys[URIRef(k)]=ModelKeyClass.from_role_key_sheet(DataFrame(list(map(key_sheet.__getitem__, ix))))
+    return keys
+
+def entity_list_to_components(entity_list : list[URIRef],
+                              graph : Graph)->dict[URIRef,dict]:
+    path_nodes = dict()
+    for path in rdfquery.results_to_resultlist(
+        Q_get_entity_dependency_paths.execute_batched(graph, 
+                                                      parameter_bindings={"subjectEntity":[URIRef(n) for n in entity_list]}
+                                                     )
+        ):
+        for c,e in path.items():
+            if c in ("subjectEntity", "subjectRole", "relationship", "objectRole", "objectEntity", "objectRoleKey", "subjectRoleKey"):
+                match c:
+                    case "subjectEntity" | "objectEntity":
+                        if "entity" not in path_nodes:
+                            path_nodes['entity']=set([URIRef(e)])
+                        else:
+                            path_nodes['entity'].add(URIRef(e))
+                    case "subjectRole" | "objectRole":
+                        if "role" not in path_nodes:
+                            path_nodes['role']=set([URIRef(e)])
+                        else:
+                            path_nodes['role'].add(URIRef(e))
+                    case "relationship":
+                        if "relationship" not in path_nodes:
+                            path_nodes['relationship']=set([URIRef(e)])
+                        else:
+                            path_nodes['relationship'].add(URIRef(e))
+                    case "objectRoleKey" | "subjectRoleKey":
+                        if "key" not in path_nodes:
+                            path_nodes['key']=set([URIRef(e)])
+                        else:
+                            path_nodes['key'].add(URIRef(e))
+    
+    entity_sheet = rdfquery.results_to_resultlist(Q_entity_attribute_sheet.execute_batched(graph,
+                                            parameter_bindings = {"entity" : path_nodes['entity']}))
+    relationship_sheet = rdfquery.results_to_resultlist(Q_relationship_sheet.execute_batched(graph,
+                                            parameter_bindings = {"relationship" : path_nodes['relationship']}))
+    role_sheet = rdfquery.results_to_resultlist(Q_role_key_attribute_sheet.execute_batched(graph,
+                                            parameter_bindings = {"role" : path_nodes['role']}))
+    key_sheet = rdfquery.results_to_resultlist(Q_key_attribute_sheet.execute_batched(graph,
+                                            parameter_bindings = {"role_key" : path_nodes['key']}))
+    
+    entity_objects = process_entity_sheet(entity_sheet)
+    relationship_objects = process_relationship_sheet(relationship_sheet)
+    role_objects = process_role_key_sheet(role_sheet)
+    key_objects=process_key_sheet(key_sheet)
+    
+    process_dict = {**entity_objects, **relationship_objects, **role_objects, **key_objects}
+    return process_dict
 
 ERDVisualisation = Visualisation(
     include_node_function=include_node_function,

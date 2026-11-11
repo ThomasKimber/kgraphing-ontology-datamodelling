@@ -33,6 +33,13 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
 
         {
             VALUES ?role_type { kgdm:SubjectRole kgdm:ObjectRole }
+            
+            # @BATCH(role)
+            VALUES ?role {
+                # @BATCH_VALUES(role)
+            }
+            # @END_BATCH(role)
+            
             ?role a ?role_type;
                 kgnam:FullyQualifiedName ?role_qualified_name;
                 kgnam:Name ?role_name.

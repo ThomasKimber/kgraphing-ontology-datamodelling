@@ -24,6 +24,13 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
     WHERE
 
         {
+
+                # @BATCH(role_key)
+                VALUES ?role_key {
+                    # @BATCH_VALUES(role_key)
+                }
+                # @END_BATCH(role_key)
+                
                 ?role_key kgnam:FullyQualifiedName ?role_key_qualified_name;
                           kgnam:Name ?role_key_name.
                 OPTIONAL { ?role_key kgdm:KeyType ?role_key_type. }

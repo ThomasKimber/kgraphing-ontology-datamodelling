@@ -27,6 +27,11 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
     WHERE 
     
         { 
+            # @BATCH(entity)
+            VALUES ?entity {
+                # @BATCH_VALUES(entity)
+            }
+            # @END_BATCH(entity)
 
             ?entity a kgdm:Entity;
                 kgnam:FullyQualifiedName ?entity_qualified_name;

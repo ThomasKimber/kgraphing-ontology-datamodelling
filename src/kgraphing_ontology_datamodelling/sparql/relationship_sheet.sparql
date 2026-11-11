@@ -4,6 +4,8 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
     SELECT
         
         ?relationship
+        ?relationship_name
+        ?relationship_qualified_name
         ?relationship_label
         ?relationship_description
         ?relationship_from_entity
@@ -19,8 +21,15 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
 
     WHERE
         {
+            # @BATCH(relationship)
+            VALUES ?relationship {
+                # @BATCH_VALUES(relationship)
+            }
+            # @END_BATCH(relationship)
 
-            ?relationship a kgdm:Relationship.
+            ?relationship a kgdm:Relationship;
+                kgnam:FullyQualifiedName ?relationship_qualified_name;
+                kgnam:Name ?relationship_name.
 
             ?subject_role kgdm:subjectRoleIsPartOfRelationship ?relationship; 
                 kgdm:subjectRoleIsAssociatedWithEntity ?relationship_from_entity.

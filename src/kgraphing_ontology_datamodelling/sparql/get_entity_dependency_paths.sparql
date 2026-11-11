@@ -7,6 +7,12 @@ SELECT
     WHERE
 
 {
+    # @BATCH(subjectEntity)
+    VALUES ?subjectEntity {
+        # @BATCH_VALUES(subjectEntity)
+    }
+    # @END_BATCH(subjectEntity)
+    
     ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
         kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
     OPTIONAL { ?subjectRole kgdm:subjectRoleIsAssociatedWithKey ?subjectRoleKey.

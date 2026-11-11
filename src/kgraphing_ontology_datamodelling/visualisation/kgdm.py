@@ -27,7 +27,7 @@ def include_node_function(gerf_object, identifier):
                         URIRef("https://kgraph.foo/onto/datamodelling#SubjectRole"),
                         URIRef("https://kgraph.foo/onto/datamodelling#ObjectRole"),
                         URIRef("https://kgraph.foo/onto/datamodelling#Attribute"),
-                        URIRef("https://kgraph.foo/onto/datamodelling#Domain"),
+                        #URIRef("https://kgraph.foo/onto/datamodelling#Domain"),
                         ) for t in test_node.interactions.get(RDF.type,{False})})
             ]
     return all(tests)
@@ -48,7 +48,6 @@ def include_edge_function(gerf_object, identifier, predicate, element):
                            KGDM.objectRoleIsAssociatedWithEntity,
                            KGDM.attributeIsPartOfEntity,
                            KGDM.isMemberOf,
-                           KGDM.attributeisMemberOfDomain,
                            KGDM.attributeisMemberOfKey,
                            KGDM.layoutBreadcrumb
                           ),
@@ -85,8 +84,8 @@ styles_by_type = {
               URIRef('https://kgraph.foo/onto/datamodelling#PrimaryKey')}) : { "color" : "#5d69e3"}, 
     frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Key'),
               URIRef('https://kgraph.foo/onto/datamodelling#ForeignKey')}) : { "color" : "#5dc4e3"}, 
-    frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Domain')}) : { "color" : "grey"},
-    frozenset({URIRef('https://kgraph.foo/onto/datamodelling#SubjectArea')}) : { "color" : "blue"},
+    #frozenset({URIRef('https://kgraph.foo/onto/datamodelling#Domain')}) : { "color" : "grey"},
+    #frozenset({URIRef('https://kgraph.foo/onto/datamodelling#SubjectArea')}) : { "color" : "blue"},
 }
 
 node_styles = {
