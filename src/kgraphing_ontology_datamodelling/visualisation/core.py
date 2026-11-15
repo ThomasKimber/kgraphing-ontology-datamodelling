@@ -90,3 +90,5 @@ class Visualisation:
                                                                                                      "spring_constant", 
                                                                                                      "spring_length", 
                                                                                                      "avoid_overlap")})
+    
+        

@@ -28,52 +28,18 @@ SVGFONTDEJAVUSANS_MONO = SVGFONTREGISTRY.registry['DejaVu Sans Mono']
 
 SVGFONTCSS = SVGFONTREGISTRY.css_style(include_fonts=['Comfortaa Regular', 'DejaVu Sans', 'DejaVu Sans Mono'])
 
-def svg_optional_single_key_function():
-    return svgsystem.SVGCircleWithSpokes(r=10,
-                                         cx=0,
-                                         cy=0,
-                                         spokes=2,
-                                         spoke_radius=6,
-                                         rot_degrees=30,
-                                         fill="none", 
-                                         stroke="black", 
-                                         stroke_width=1)
-
-def svg_optional_multi_key_function():
-    return svgsystem.SVGCircleWithSpokes(r=10,
-                                         cx=0,
-                                         cy=0,
-                                         spokes=6,
-                                         spoke_radius=6,
-                                         fill="none", 
-                                         stroke="black", 
-                                         stroke_width=1)
-
-def svg_mandatory_single_key_function():
-    return svgsystem.SVGRectangleWithSpokes(x=0,
-                                         y=0,
-                                         width=20,
-                                         height=20,
-                                         spokes=2,
-                                         spoke_radius=7,
-                                         rot_degrees=30,
-                                         fill="none", 
-                                         stroke="black", 
-                                         stroke_width=1)
-
-def svg_mandatory_multi_key_function():
-    return svgsystem.SVGRectangleWithSpokes(x=0,
-                                         y=0,
-                                         width=20,
-                                         height=20,
-                                         spokes=6,
-                                         spoke_radius=7,
-                                         rot_degrees=30,
-                                         fill="none", 
-                                         stroke="black", 
-                                         stroke_width=1)
-
 KGDM = Namespace(URIRef("https://kgraph.foo/onto/datamodelling#"))
+
+def decode_optionality_string(opt_str : str)->bool:
+    if str(opt_str).lower().strip() in ("yes", "y", "true", "optional", "1"):
+        return True
+    return False
+
+def decode_cardinality_many(card_str : str)->bool:
+    if str(card_str).lower().strip() in ("many", "m", "true", "*"):
+        return True
+    return False
+
 
 class ModelThingClass:
     name : str
@@ -93,6 +59,19 @@ class ModelThingClass:
         self.uri=uri
         self.qualified_name=qualified_name
 
+    @classmethod
+    def uri_to_safe_mermaid_id(cls, uri : URIRef)->str:
+        replace_chars = set(":/#.<>\"")
+        return "".join(["_" if c in replace_chars else c for c in str(uri)])
+
+    @classmethod
+    def str_to_safe_mermaid_comment(cls, cstr : str)->str:
+        return str(cstr).replace('"', '#quot;')
+
+    @classmethod
+    def str_to_safe_mermaid_id(cls, sstr : str)->str:
+        replace_chars = set(":/#.<>\"")
+        return "".join(["_" if c in replace_chars else c for c in str(sstr)])
 
 class ModelRelationshipClass(ModelThingClass):
     def __init__(self,  name : str,
@@ -135,16 +114,49 @@ class ModelRelationshipClass(ModelThingClass):
                       "uri" : URIRef(row.relationship), 
                       "qualified_name" : row.relationship_qualified_name,
                       "from_entity_uri" : URIRef(row.relationship_from_entity), 
-                        "to_entity_uri" : URIRef(row.relationship_to_entity),
-                        "from_entity_label" : row.relationship_from_entity_label, 
-                        "to_entity_label" : row.relationship_to_entity_label, 
-                        "subject_role_uri" : URIRef(row.subject_role), 
-                        "object_role_uri" : URIRef(row.object_role),
-                        "object_role_cardinality" : row.object_role_cardinality, 
-                        "object_role_optionality" : row.object_role_optionality,
-                        "subject_role_cardinality" : row.subject_role_cardinality, 
-                        "subject_role_optionality" : row.subject_role_optionality
+                      "to_entity_uri" : URIRef(row.relationship_to_entity),
+                      "from_entity_label" : row.relationship_from_entity_label, 
+                      "to_entity_label" : row.relationship_to_entity_label, 
+                      "subject_role_uri" : URIRef(row.subject_role), 
+                      "object_role_uri" : URIRef(row.object_role),
+                      "object_role_cardinality" : row.object_role_cardinality, 
+                      "object_role_optionality" : row.object_role_optionality,
+                      "subject_role_cardinality" : row.subject_role_cardinality, 
+                      "subject_role_optionality" : row.subject_role_optionality
         })
+    
+    def to_mermaid(self, indent="\t"):
+
+        rel_end_matrix = {"from" : {
+            "optional" : { "one" :  "|o",
+                           "many" : "}o"},
+            "mandatory" : { "one" : "||",
+                           "many" : "}|"},
+        },
+                          "to" : {
+            "optional" : { "one" :  "o|",
+                           "many" : "o{"},
+            "mandatory" : { "one" : "||",
+                           "many" : "|{"},
+        } }
+        l_key = ["from", 
+                 "optional" if decode_optionality_string(self.subject_role_optionality) else "mandatory", 
+                 "one" if decode_cardinality_many(self.subject_role_cardinality) else "many"]
+        r_key = ["to", 
+                "optional" if decode_optionality_string(self.object_role_optionality) else "mandatory", 
+                "one" if decode_cardinality_many(self.object_role_cardinality) else "many"]
+
+        lt = rel_end_matrix.get(l_key[0],{}).get(l_key[1],{}).get(l_key[2],{})
+        rt = rel_end_matrix.get(r_key[0],{}).get(r_key[1],{}).get(r_key[2],{})
+                
+
+        return "{indent}{left} {lt}--{rt} {right} : {relationship}".format(
+                                                            indent=indent,
+                                                            left=ModelThingClass.uri_to_safe_mermaid_id(self.from_entity_uri), 
+                                                            right=ModelThingClass.uri_to_safe_mermaid_id(self.to_entity_uri), 
+                                                            lt=lt, 
+                                                            rt=rt, 
+                                                            relationship="\"" + str(self.label) + "\"")
 
 class ModelDomainClass(ModelThingClass):
     def __init__(self,  name : str,
@@ -221,7 +233,7 @@ class ModelAttributeClass(ModelThingClass):
                       "qualified_name" : None,
                       "domain" : ModelDomainClass.from_entity_attribute_row(row),
                       "sequence" : None,
-                      "optional" : None,
+                      "optional" : row.attribute_optional,
                       "isPK" : None,
                       "isFK" : None
         })
@@ -239,6 +251,26 @@ class ModelAttributeClass(ModelThingClass):
         for i,row in df.iterrows():
             a_list.append(cls.from_role_key_attribute_row(row))
         return a_list
+
+    def to_mermaid(self, indent="\t", include_description=False):
+        datatype = ModelThingClass.str_to_safe_mermaid_id(self.domain.name)
+        if decode_optionality_string(self.optional):
+            datatype += "?" 
+        attribute_name=ModelThingClass.str_to_safe_mermaid_id(self.name)
+        keys=",".join([k for k in ["PK" if self.isPK else None,
+                          "FK" if self.isFK else None] if k is not None])
+        description=ModelThingClass.str_to_safe_mermaid_comment(self.description)
+        if include_description:
+            return """{indent}{indent}{datatype} `{attribute}` {keys} \"{description}\" """.format(indent=indent, 
+                                                                                                datatype=datatype, 
+                                                                                                attribute=attribute_name, 
+                                                                                                keys=keys, 
+                                                                                                description=description)
+        else:
+            return """{indent}{indent}{datatype} `{attribute}` {keys} """.format(indent=indent, 
+                                                                            datatype=datatype, 
+                                                                            attribute=attribute_name, 
+                                                                            keys=keys)
 
 class ModelEntityClass(ModelThingClass):
     attribute_list : list[ModelAttributeClass]
@@ -281,8 +313,19 @@ class ModelEntityClass(ModelThingClass):
             frame_contents.append({"Attribute" : a.name, "Type" : a.domain.name, "Optional" : a.optional, "PK" : key_glyph_map.get(a.isPK,a.isPK), "FK" : key_glyph_map.get(a.isFK,"")})
         return DataFrame(frame_contents)
     
-    def to_mermaid(self):
-        pass
+    def to_mermaid(self, indent="\t", include_description=False):
+        attributes=[]
+        for a in sorted(self.attribute_list, key=lambda x : x.sequence):
+            attributes.append(a.to_mermaid(include_description=include_description))
+        attributes="\n".join(attributes)
+        entity = ModelThingClass.uri_to_safe_mermaid_id(self.uri)
+        label = self.label
+
+        return """{indent}{entity}[\"{optional_alias}\"] {{
+                    {attributes}
+                    {indent}}}""".format(indent=indent, entity=entity, 
+                                         optional_alias=label, attributes=attributes)
+
 
     def to_svg_component(self):
 
@@ -432,16 +475,10 @@ class ModelRoleClass(ModelThingClass):
 
         # Handle spurious data options:
         if not isinstance(self.is_optional, bool):
-            if str(self.is_optional).lower().strip() in ("yes", "y", "true", "optional", "1"):
-                self.is_optional=True
-            else:
-                self.is_optional=False
+            self.is_optional=decode_optionality_string(self.is_optional)
 
         if not isinstance(self.has_many, bool):
-            if str(self.has_many).lower().strip() in ("many", "m", "true", "*"):
-                self.has_many=True
-            else:
-                self.has_many=False
+            self.has_many=decode_cardinality_many(self.has_many)
 
     @classmethod
     def from_role_key_sheet(cls, df : DataFrame)-> Self:
@@ -882,6 +919,12 @@ def entity_list_to_components(entity_list : list[URIRef],
     process_dict = {k:v for d in process_objects for k, v in d.items()}
     return process_dict
 
+def mermaid_from_process_dict(process_dict : dict, include_description=False)->str:
+    mermaid_head = "erDiagram"
+    mermaid_rels = "\n".join([r.to_mermaid() for r in process_dict.values() if isinstance(r, ModelRelationshipClass)])
+    mermaid_ents = "\n".join([r.to_mermaid(include_description=include_description) for r in process_dict.values() if isinstance(r, ModelEntityClass)])
+    return f"{mermaid_head} \n\n {mermaid_rels} \n\n {mermaid_ents}"
+
 ERDVisualisation = Visualisation(
     include_node_function=include_node_function,
     include_edge_function=include_edge_function,
@@ -889,3 +932,4 @@ ERDVisualisation = Visualisation(
     classify_edge_passes=[classify_edges_on_type],
     vis_graph_settings=vis_graph_settings
 )
+

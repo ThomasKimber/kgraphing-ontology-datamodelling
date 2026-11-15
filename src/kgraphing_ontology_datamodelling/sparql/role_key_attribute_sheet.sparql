@@ -23,6 +23,7 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
         ?attribute_label
         ?attribute_description
         ?attribute_sequence
+        ?attribute_optional
         ?domain
         ?domain_name
         ?domain_qualified_name
@@ -62,6 +63,7 @@ PREFIX kgnam: <https://kgraph.foo/onto/kgnam#>
                 OPTIONAL { ?attribute rdfs:label ?attribute_label. }
                 OPTIONAL { ?attribute kgdm:Description ?attribute_description. }
                 OPTIONAL {?attribute kgdm:ElementSequence ?attribute_sequence.}
+                OPTIONAL {?attribute kgdm:AttributeIsOptional ?attribute_optional.}
                 OPTIONAL {?attribute kgdm:attributeisMemberOfDomain ?domain.
                                 ?domain a kgdm:Domain;
                                     kgnam:Name ?domain_name;
