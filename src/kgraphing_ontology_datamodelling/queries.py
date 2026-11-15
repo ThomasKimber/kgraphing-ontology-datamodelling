@@ -120,6 +120,15 @@ Q_get_entity_dependency_paths = rdfquery.QueryAPI("Role Associated Relationships
                              init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
                                              "kgnam":"https://kgraph.foo/onto/kgnam#"})
 
+Q_get_entity_dependency_paths_closure = rdfquery.QueryAPI("Role Associated Relationships",
+                             query=files('kgraphing_ontology_datamodelling.sparql').joinpath('get_entity_dependency_paths_closure.sparql').read_text(encoding="utf-8"),
+                             description="Returns all outbound relationship paths associated with a given entity.",
+                             parameters={"subjectEntity" : URIRef},
+                             batch_parameter="subjectEntity",
+                             batch_size=250,
+                             init_namespace={"kgdm":"https://kgraph.foo/onto/datamodelling#", 
+                                             "kgnam":"https://kgraph.foo/onto/kgnam#"})
+
 Q_get_key_attributes = rdfquery.QueryAPI("Attribute Members of Key",
                              query=files('kgraphing_ontology_datamodelling.sparql').joinpath('get_key_attributes.sparql').read_text(encoding="utf-8"),
                              description="Returns all attributes that are members of a key.",

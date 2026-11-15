@@ -15,11 +15,9 @@ CONSTRUCT
     ?relationship a kgdm:Relationship.
 
     ?subjectRole kgdm:subjectRoleIsPartOfRelationship ?relationship;
-        a kgdm:SubjectRole;
             kgdm:subjectRoleIsAssociatedWithEntity ?subjectEntity.
 
     ?objectRole kgdm:objectRoleIsPartOfRelationship ?relationship;
-        a kgdm:ObjectRole;
             kgdm:objectRoleIsAssociatedWithEntity ?objectEntity.
     
 }

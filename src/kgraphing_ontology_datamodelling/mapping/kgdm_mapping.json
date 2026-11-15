@@ -180,7 +180,7 @@
                 },{
                     "InstanceName": "SourceRoleKey",
                     "SubjectTag": "SourceRoleKey",
-                    "ParentTag": "Entity",
+                    "ParentTag": "SourceRoleEntity",
                     "Definition": false
                 },{
                     "InstanceName": "TargetRoleKey",

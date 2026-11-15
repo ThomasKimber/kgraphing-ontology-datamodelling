@@ -16,7 +16,7 @@ from kgraphing import setfunctions, gerf
 from kgraphing.visgerf import VisGerf
 from kgraphing_ontology_datamodelling.queries import Q_entity_attribute_sheet, Q_relationship_sheet, Q_role_key_attribute_sheet
 from kgraphing_ontology_datamodelling.queries import Q_get_object_by_type, Q_get_entity_roles, Q_get_key_attributes
-from kgraphing_ontology_datamodelling.queries import Q_key_attribute_sheet, Q_get_entity_dependency_paths
+from kgraphing_ontology_datamodelling.queries import Q_key_attribute_sheet, Q_get_entity_dependency_paths_closure
 
 
 from kgraphing.store import rdfquery
@@ -817,7 +817,7 @@ def entity_list_to_components(entity_list : list[URIRef],
                               graph : Graph)->dict[URIRef,dict]:
     path_nodes = dict()
     for path in rdfquery.results_to_resultlist(
-        Q_get_entity_dependency_paths.execute_batched(graph, 
+        Q_get_entity_dependency_paths_closure.execute_batched(graph, 
                                                       parameter_bindings={"subjectEntity":[URIRef(n) for n in entity_list]}
                                                      )
         ):
@@ -844,22 +844,42 @@ def entity_list_to_components(entity_list : list[URIRef],
                             path_nodes['key']=set([URIRef(e)])
                         else:
                             path_nodes['key'].add(URIRef(e))
+
+    process_defs = [
+        (Q_entity_attribute_sheet, "entity", "entity",process_entity_sheet),
+        (Q_relationship_sheet, "relationship" ,"relationship" , process_relationship_sheet),
+        (Q_role_key_attribute_sheet, "role", "role", process_role_key_sheet),
+        (Q_key_attribute_sheet, "role_key", "key", process_key_sheet)
+    ]
+
+    process_objects=[]
+
+    for q, p, k, f in tqdm.tqdm(process_defs):
+        process_objects.append(
+            f(
+                rdfquery.results_to_resultlist((q.execute_batched(
+                    graph, 
+                    parameter_bindings = {p : path_nodes[k]}))
+                )
+            )
+        )
     
-    entity_sheet = rdfquery.results_to_resultlist(Q_entity_attribute_sheet.execute_batched(graph,
-                                            parameter_bindings = {"entity" : path_nodes['entity']}))
-    relationship_sheet = rdfquery.results_to_resultlist(Q_relationship_sheet.execute_batched(graph,
-                                            parameter_bindings = {"relationship" : path_nodes['relationship']}))
-    role_sheet = rdfquery.results_to_resultlist(Q_role_key_attribute_sheet.execute_batched(graph,
-                                            parameter_bindings = {"role" : path_nodes['role']}))
-    key_sheet = rdfquery.results_to_resultlist(Q_key_attribute_sheet.execute_batched(graph,
-                                            parameter_bindings = {"role_key" : path_nodes['key']}))
+#    entity_sheet = rdfquery.results_to_resultlist(Q_entity_attribute_sheet.execute_batched(graph,
+#                                           parameter_bindings = {"entity" : path_nodes['entity']}))
+#   relationship_sheet = rdfquery.results_to_resultlist(Q_relationship_sheet.execute_batched(graph,
+#                                           parameter_bindings = {"relationship" : path_nodes['relationship']}))
+#   role_sheet = rdfquery.results_to_resultlist(Q_role_key_attribute_sheet.execute_batched(graph,
+#                                           parameter_bindings = {"role" : path_nodes['role']}))
+#   key_sheet = rdfquery.results_to_resultlist(Q_key_attribute_sheet.execute_batched(graph,
+#                                           parameter_bindings = {"role_key" : path_nodes['key']}))
     
-    entity_objects = process_entity_sheet(entity_sheet)
-    relationship_objects = process_relationship_sheet(relationship_sheet)
-    role_objects = process_role_key_sheet(role_sheet)
-    key_objects=process_key_sheet(key_sheet)
+#   entity_objects = process_entity_sheet(entity_sheet)
+#   relationship_objects = process_relationship_sheet(relationship_sheet)
+#   role_objects = process_role_key_sheet(role_sheet)
+#   key_objects=process_key_sheet(key_sheet)
     
-    process_dict = {**entity_objects, **relationship_objects, **role_objects, **key_objects}
+#   process_dict = {**entity_objects, **relationship_objects, **role_objects, **key_objects}
+    process_dict = {k:v for d in process_objects for k, v in d.items()}
     return process_dict
 
 ERDVisualisation = Visualisation(
